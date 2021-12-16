@@ -220,7 +220,7 @@ export default {
 				withLegend: true
 			});
 
-			$$.cache.remove(ids);
+			$$.cache?.remove(ids); //!!AdRem!!
 			args.done && args.done.call(this);
 		});
 	}

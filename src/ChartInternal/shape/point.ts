@@ -158,7 +158,7 @@ export default {
 		const opacityStyleFn = $$.opacityForCircle.bind($$);
 		const mainCircles: any[] = [];
 
-		$root.circle.each(function(d) {
+		$root.circle?.each(function(d) { // !!AdRem!!
 			let result: d3Selection | any = fn.bind(this)(d);
 
 			result = $T(result, withTransition || !rendered, t)

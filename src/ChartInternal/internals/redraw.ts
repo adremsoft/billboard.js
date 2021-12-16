@@ -11,6 +11,7 @@ export default {
 	redraw(options: any = {}): void {
 		const $$ = this;
 		const {config, state, $el} = $$;
+                if ($el == null) return; //!!AdRem!!
 		const {main} = $el;
 
 		state.redrawing = true;
