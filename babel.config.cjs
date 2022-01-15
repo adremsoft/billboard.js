@@ -6,11 +6,7 @@ module.exports = function(api) {
 		[
 			"@babel/env", {
 				"targets": {
-					"browsers": [
-						"last 2 versions",
-						"ie >= 9",
-						"iOS >= 8"
-					]
+						 chrome: "86"
 				},
 				"modules": false,
 				"loose": true,
