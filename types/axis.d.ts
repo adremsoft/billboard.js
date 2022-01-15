@@ -94,10 +94,10 @@ export interface xAxisConfiguration extends AxisConfigurationBase {
 	 * Set default extent for subchart and zoom.
 	 * This can be an array or function that returns an array.
 	 */
-	extent?: number[] | string[] | (
+	extent?: Array<number|string> | (
 		(
 			this: Chart,
-			domain: Date|string|number[],
+			domain: Array<Date|string|number>,
 			scale: (value: any) => number
 		) => number[]
 	);
@@ -197,14 +197,21 @@ export interface XTickConfiguration {
 
 	/**
 	 * Setting for culling ticks.
-	 * If true is set, the ticks will be culled, then only limitted tick text will be shown.
-	 * This option does not hide the tick lines. If false is set, all of ticks will be shown.
+	 * - `true`: the ticks will be culled, then only limited tick text will be shown.
+	 *   This option does not hide the tick lines by default, if want to hide tick lines, set `axis.x.tick.culling.lines=false`.
+	 * - `false`: all of ticks will be shown.
+	 * The number of ticks to be shown can be chaned by `axis.x.tick.culling.max`.
 	 */
 	culling?: boolean | {
 		/**
 		 * The number of tick texts will be adjusted to less than this value.
 		 */
 		max?: number;
+
+		/**
+		 * Control visibility of tick lines within culling option, along with tick text.
+		 */
+		lines?: boolean;
 	};
 
 	/**
@@ -226,7 +233,7 @@ export interface XTickConfiguration {
 	 * If this option is provided, the position of the ticks will be determined based on those values.
 	 * This option works with timeseries data and the x values will be parsed accoding to the type of the value and data.xFormat option.
 	 */
-	values?: number[] | string[] | ((this: Chart) => number[]);
+	values?: Array<number|string> | ((this: Chart) => number[]);
 
 	/**
 	 * Rotate x axis tick text.
@@ -334,14 +341,21 @@ export interface YTickConfiguration {
 
 	/**
 	 * Setting for culling ticks.
-	 * If true is set, the ticks will be culled, then only limitted tick text will be shown.
-	 * This option does not hide the tick lines. If false is set, all of ticks will be shown.
+	 * - `true`: the ticks will be culled, then only limited tick text will be shown.
+	 *   This option does not hide the tick lines by default, if want to hide tick lines, set `axis.[y|y2].tick.culling.lines=false`.
+	 * - `false`: all of ticks will be shown.
+	 * The number of ticks to be shown can be chaned by `axis.[y|y2].tick.culling.max`.
 	 */
 	culling?: boolean | {
 		/**
 		 * The number of tick texts will be adjusted to less than this value.
 		 */
 		max?: number;
+
+		/**
+		 * Control visibility of tick lines within culling option, along with tick text.
+		 */
+		lines?: boolean;
 	};
 
 	/**
@@ -400,6 +414,6 @@ export interface AxesConfiguration {
 		/**
 		 * Set tick values manually
 		 */
-		values?: number|string|Date[];
+		values?: Array<number|string|Date>;
 	};
 }
