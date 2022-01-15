@@ -268,7 +268,7 @@ export default {
 				($$.isCandlestickType(d) && "candlestick") ||
 				($$.isRadarType(d) && "radar") || "line";
 
-			return getter.call($$, points[type](d, i), d, this);
+			return getter.call($$, points[type]?.(d, i), d, this);
 		};
 	},
 
@@ -336,8 +336,11 @@ export default {
 		const $$ = this;
 		const {config, state} = $$;
 		const isRotated = config.axis_rotated;
-		let xPos = points[0][0];
 
+		if (points == null) {
+			  return 0;
+		}
+		let xPos = points[0][0];
 
 		if ($$.isCandlestickType(d)) {
 			if (isRotated) {
@@ -391,6 +394,10 @@ export default {
 		let {value} = d;
 		let baseY = 3;
 		let yPos;
+
+		if (points == null) {
+			return 0;
+		}
 
 		if ($$.isCandlestickType(d)) {
 			value = $$.getCandlestickData(d);
