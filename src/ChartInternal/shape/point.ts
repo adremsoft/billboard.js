@@ -421,7 +421,7 @@ export default {
 			const y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id));
 			const offset = lineOffset(d, i) || y0; // offset is for stacked area chart
 			const posX = x(d);
-			let posY = y(d);
+			let posY = y(d) ?? y0; //!!AdRem
 
 			// fix posY not to overflow opposite quadrant
 			if (config.axis_rotated && (
@@ -543,7 +543,7 @@ export default {
 
 			return mainCircles
 				.attr("cx", xPosFn)
-				.attr("cy", yPosFn)
+				.attr("cy", (...args) => yPosFn(...args) ?? 0) //!!Adrem
 				.style("fill", fillStyleFn);
 		}
 	},
