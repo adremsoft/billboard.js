@@ -85,6 +85,10 @@ export default {
 
 	updateXGrid(withoutUpdate): void {
 		const $$ = this;
+
+		if ($$.$el == null) {
+			return;
+		}
 		const {config, scale, state, $el: {main, grid}} = $$;
 		const isRotated = config.axis_rotated;
 		const xgridData = $$.generateGridData(config.grid_x_type, scale.x);

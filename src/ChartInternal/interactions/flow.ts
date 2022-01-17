@@ -109,6 +109,10 @@ export default {
 	 */
 	cleanUpFlow(elements, args): void {
 		const $$ = this;
+
+		if ($$.$el == null) {
+			return;
+		}
 		const {config, state, $el: {svg}} = $$;
 		const isRotated = config.axis_rotated;
 
@@ -202,6 +206,10 @@ export default {
 	getFlowTransform(targets, orgDataCount, flowIndex, flowLength): string {
 		const $$ = this;
 		const {data, scale: {x}} = $$;
+
+		if (data.targets == null) {
+			return "";
+		}
 		const dataValues = data.targets[0].values;
 
 		let flowStart = $$.getValueOnIndex(dataValues, flowIndex);
