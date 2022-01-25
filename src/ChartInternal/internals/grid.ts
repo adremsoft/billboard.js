@@ -414,6 +414,10 @@ export default {
 
 	hideGridFocus(): void {
 		const $$ = this;
+
+		if ($$.state == null) {
+			return;
+		}
 		const {state: {inputType, resizing}, $el: {main}} = $$;
 
 		if (inputType === "mouse" || !resizing) {
