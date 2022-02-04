@@ -247,10 +247,11 @@ export default {
 	redrawWithoutRescale() {
 		this.redraw({
 			withY: false,
-			withLegend: true,
+			withDimension: false,
+			withLegend: false,
 			withSubchart: false,
 			withEventRect: false,
-			withTransitionForAxis: false
+			withTransitionForAxis: false,
 		});
 	}
 };
