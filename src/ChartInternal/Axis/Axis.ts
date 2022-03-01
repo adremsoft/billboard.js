@@ -894,7 +894,7 @@ class Axis {
 			const prefix = `axis_${key}_`;
 			const axisScale = scale[key];
 
-			if (config[`${prefix}show`] && axisScale) {
+			if (axisScale) {
 				const tickValues = config[`${prefix}tick_values`];
 				const tickCount = config[`${prefix}tick_count`];
 
@@ -968,8 +968,9 @@ class Axis {
 
 					tickNodes.each(function(d) {
 						if (tickValues.indexOf(d) % intervalForCulling) {
-							(lines ? this.querySelector("text") : this)
-								.style.display = "none";
+							const node = (lines ? this.querySelector("text") : this);
+
+							node && (node.style.display = "none");
 						}
 					});
 				} else {
