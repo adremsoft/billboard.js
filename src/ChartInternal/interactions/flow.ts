@@ -205,6 +205,11 @@ export default {
 	 */
 	getFlowTransform(targets, orgDataCount, flowIndex, flowLength): string {
 		const $$ = this;
+
+		if ($$.scale == null) {
+			return "";
+		}
+
 		const {data, scale: {x}} = $$;
 
 		if (data.targets == null) {
