@@ -110,8 +110,10 @@ export default {
 			$$.unbindAllEvents();
 
 			// clear timers && pending transition
-			svg.select("*").interrupt();
-			$$.resizeFunction.clear();
+			if (svg) {
+				svg.select("*").interrupt();
+			}
+			$$.resizeFunction?.clear();
 
 			window.removeEventListener("resize", $$.resizeFunction);
 			chart.classed("bb", false)
