@@ -663,14 +663,14 @@ export default {
 	 */
 	getDataIndexFromEvent(event): number {
 		const $$ = this;
-		const {config, state: {inputType, eventReceiver: {coords, rect}}} = $$;
+		const {config, state: {inputType, eventReceiver: {coords, rect, scale}}} = $$;
 		const isRotated = config.axis_rotated;
 
 		// get data based on the mouse coords
 		const e = inputType === "touch" && event.changedTouches ? event.changedTouches[0] : event;
 		const index = findIndex(
 			coords,
-			isRotated ? e.clientY - rect.top : e.clientX - rect.left,
+			(isRotated ? e.clientY - rect.top : e.clientX - rect.left) * scale,
 			0,
 			coords.length - 1,
 			isRotated
