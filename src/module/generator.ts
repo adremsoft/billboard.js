@@ -60,6 +60,7 @@ export function generateWait() {
 
 				try {
 					t.transition();
+					done++;
 				} catch (e) {
 					done++;
 				}
