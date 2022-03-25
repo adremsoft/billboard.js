@@ -72,7 +72,7 @@ export function generateWait() {
 				}
 
 				// when tab isn't visible exit loop
-				if (isTabVisible() === false) {
+				if (!isTabVisible()) {
 					done = transitionsToWait.length;
 					break;
 				}
@@ -93,7 +93,7 @@ export function generateWait() {
 			}
 		}
 
-		if (document.visibilityState === "visible") {
+		if (!isTabVisible()) {
 			loop();
 		} else {
 			callback?.();
