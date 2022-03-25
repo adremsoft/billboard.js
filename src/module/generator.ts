@@ -68,7 +68,10 @@ export function generateWait() {
 
 				try {
 					t.transition();
-					done++;
+					if (document.visibilityState !== "visible") {
+						callback?.();
+						return;
+					}
 				} catch (e) {
 					done++;
 				}
@@ -83,7 +86,9 @@ export function generateWait() {
 			}
 		}
 
-		loop();
+		if (document.visibilityState === "visible") {
+			loop();
+		}
 	};
 
 	f.add = function(t: Transition | Transition[]) {
