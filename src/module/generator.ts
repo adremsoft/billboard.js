@@ -61,6 +61,11 @@ export function generateWait() {
 			let done = 0;
 
 			for (let i = 0, t; (t = transitionsToWait[i]); i++) {
+				if (document.visibilityState !== "visible") {
+					callback?.();
+					return;
+				}
+
 				if (t === true || t.empty?.()) {
 					done++;
 					continue;
@@ -68,10 +73,6 @@ export function generateWait() {
 
 				try {
 					t.transition();
-					if (document.visibilityState !== "visible") {
-						callback?.();
-						return;
-					}
 				} catch (e) {
 					done++;
 				}
@@ -88,6 +89,8 @@ export function generateWait() {
 
 		if (document.visibilityState === "visible") {
 			loop();
+		} else {
+			callback?.();
 		}
 	};
 
