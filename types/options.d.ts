@@ -8,7 +8,7 @@ import Bubblecompare from "./plugin/bubblecompare/index";
 import Stanford from "./plugin/stanford/index";
 import TextOverlap from "./plugin/textoverlap/index";
 import {Chart} from "./chart";
-import {IData} from "../src/ChartInternal/data/IData";
+import {IArcData, IData, IDataRow} from "../src/ChartInternal/data/IData";
 
 export interface ChartOptions {
 	/**
@@ -99,6 +99,14 @@ export interface ChartOptions {
 		 * Indicate if the chart should automatically get resized when the window gets resized.
 		 */
 		auto?: boolean;
+
+		/**
+		 * Set resize timer option.
+		 * - **NOTE:**
+		 *   - The resize function will be called using: true - `setTimeout()`, false - `requestIdleCallback()`.
+		 *   - Given number(delay in ms) value, resize function will be triggered using `setTimer()` with given delay.
+		 */
+		timer?: boolean | number;
 	};
 
 	color?: {
@@ -1082,10 +1090,10 @@ export interface TooltipOptions {
 	 */
 	contents?: ((
 		this: Chart,
-		data: any,
-		defaultTitleFormat: string,
-		defaultValueFormat: string,
-		color: any
+		data: IDataRow[],
+		defaultTitleFormat: (x: Date|number|string) => number|string,
+		defaultValueFormat: (value: number, ratio: number|undefined, id: string) => number|string,
+		color: (d: IDataRow|IArcData|string) => string
 	) => string) | {
 		/**
 		 * Set CSS selector or element reference to bind tooltip.
@@ -1193,7 +1201,7 @@ export interface SubchartOptions {
 				 * Use custom format for x axis ticks - see 'axis.x.tick.format' option for details.
 				 */
 				format?: string
-					| ((this: Chart, x: number | Date) => string | number)
+					| ((this: Chart, x: Date) => string | number)
 					| ((this: Chart, index: number, categoryName: string) => string);
 				/**
 				 * Show or hide x axis tick line.
@@ -1520,7 +1528,7 @@ export interface Data {
 	/**
 	 * Set custom data name.
 	 */
-	names?: { [key: string]: string };
+	names?: { [key: string]: string|null };
 	/**
 	 * Set custom data class.
 	 * If this option is specified, the element g for the data has an additional class that has the prefix billboard-target- (e.g. billboard-target-additional-data1-class).
@@ -1613,7 +1621,12 @@ export interface Data {
 				 */
 				y?: number;
 			};
-		}
+		};
+
+		/**
+		 * Rotate label text. Specify degree value in a range of `0 ~ 360`.
+		 */
+		rotate?: number;
 	};
 
 	/**

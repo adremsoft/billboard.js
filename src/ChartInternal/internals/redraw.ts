@@ -27,7 +27,6 @@ export default {
 		$$.updateSizes(initializing);
 
 		// update legend and transform each g
-
 		if (wth.Legend && config.legend_show) {
 			options.withTransition = !!duration;
 			$$.updateLegend($$.mapToIds($$.data.targets), options, transitions);
@@ -247,7 +246,11 @@ export default {
 		$$.redraw(options, transitions);
 	},
 
-	redrawWithoutRescale() {
+	/**
+	 * Redraw without rescale
+	 * @private
+	 */
+	redrawWithoutRescale(): void {
 		this.redraw({
 			withY: false,
 			withDimension: false,

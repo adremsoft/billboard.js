@@ -2503,6 +2503,24 @@ var demos = {
 				}
 			},
 		],
+		DataLabelRotate: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30, -200, -100, 400, 150, 250]
+					],
+					type: "bar",
+					labels: {
+						rotate: 90
+					}
+				},
+				axis: {
+					x: {
+						type: "category"
+					}
+				}
+			}
+		},
 		DataSelection: {
 			options: {
 				data: {
@@ -2578,7 +2596,7 @@ var demos = {
 							// select data points
 							d3.select(".bb-shapes-" + v.id + " .bb-circle-" + v.index)
 								.style("fill", "red")
-								.attr("r", "8");
+								.attr("stroke-width", "10");
 						});
 					},
 					onmax: function(data) {
@@ -2586,7 +2604,7 @@ var demos = {
 							// select data points
 							d3.select(".bb-shapes-" + v.id + " .bb-circle-" + v.index)
 								.style("fill", "green")
-								.attr("r", "8");
+								.attr("stroke-width", "10");
 						});
 					}
 				}
