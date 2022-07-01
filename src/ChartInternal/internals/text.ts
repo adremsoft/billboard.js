@@ -425,9 +425,10 @@ export default {
 		const $$ = this;
 		const {config, state} = $$;
 		const isRotated = config.axis_rotated;
+		let xPos;
 
 		if (points == null) {
-			  return 0;
+			return 0;
 		}
 
 		if ($$.isCandlestickType(d)) {
