@@ -443,7 +443,7 @@ export default {
 
 				xPos = points[2][1] + padding * (d.value < 0 ? -1 : 1);
 			} else {
-				xPos = $$.hasType("bar") ? (points[2][0] + points[0][0]) / 2 : xPos;
+				xPos = $$?.hasType("bar") ? (points[2][0] + points[0][0]) / 2 : xPos;
 			}
 		}
 
