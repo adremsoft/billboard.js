@@ -44,7 +44,7 @@ import text from "./internals/text";
 import title from "./internals/title";
 import tooltip from "./internals/tooltip";
 import transform from "./internals/transform";
-import type from "./internals/type";
+import typeInternals from "./internals/type";
 
 /**
  * Internal chart class.
@@ -468,8 +468,9 @@ export default class ChartInternal {
 		}
 
 		// Define g for chart area
-		main.append("g").attr("class", $COMMON.chart)
-			.attr("clip-path", state.clip.path);
+		main.append("g")
+			.classed($COMMON.chart, true)
+			.attr("clip-path", hasAxis ? state.clip.path : null);
 
 		$$.callPluginHook("$init");
 
@@ -807,5 +808,5 @@ extend(ChartInternal.prototype, [
 	title,
 	tooltip,
 	transform,
-	type
+	typeInternals
 ]);

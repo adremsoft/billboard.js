@@ -144,7 +144,9 @@ export default {
 	},
 
 	/**
-	 * Get or set single config option value.
+	 * Get or set config option value.
+	 * - **NOTE:** for without parameter occasion
+	 * 	- will return all specified generation options object only. (will exclude any other options not specified at the initialization)
 	 * @function config
 	 * @instance
 	 * @memberof Chart
@@ -154,8 +156,12 @@ export default {
 	 * - **NOTE:** Doesn't guarantee work in all circumstances. It can be applied for limited options only.
 	 * @returns {*}
 	 * @example
+	 *
 	 * // Getter
 	 * chart.config("gauge.max");
+	 *
+	 * // without any arguments, it returns generation config object
+	 * chart.config();  // {data: { ... }, axis: { ... }, ...}
 	 *
 	 * // Setter
 	 * chart.config("gauge.max", 100);
@@ -165,11 +171,11 @@ export default {
 	 */
 	config(name: string, value?: any, redraw?: boolean): any {
 		const $$ = this.internal;
-		const {config} = $$;
+		const {config, state} = $$;
 		const key = name?.replace(/\./g, "_");
 		let res;
 
-		if (key in config) {
+		if (name && key in config) {
 			if (isDefined(value)) {
 				config[key] = value;
 				res = value;
@@ -178,6 +184,8 @@ export default {
 			} else {
 				res = config[key];
 			}
+		} else {
+			res = state.orgConfig;
 		}
 
 		return res;
