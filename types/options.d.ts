@@ -298,7 +298,7 @@ export interface ChartOptions {
 		 *  - y {Array}: `y1`, `y2` value
 		 *  - stops {Array}: Each item should be having `[offset, stop-color, stop-opacity]` values.
 		 */
-		linearGradient?: boolean | AreaLinearGradientOptions;
+		linearGradient?: boolean | LinearGradientOptions;
 
 		/**
 		 * Set if min or max value will be 0 on area chart.
@@ -320,6 +320,15 @@ export interface ChartOptions {
 		indices?: {
 			removeNull?: boolean;
 		}
+
+		/**
+		 * Set the linear gradient on bar.<br><br>
+		 * Or customize by giving below object value:
+		 *  - x {Array}: `x1`, `x2` value
+		 *  - y {Array}: `y1`, `y2` value
+		 *  - stops {Array}: Each item should be having `[offset, stop-color, stop-opacity]` values.
+		 */
+		linearGradient?: boolean | LinearGradientOptions;
 
 		/**
 		 * Bars will be rendered at same position, which will be overlapped each other. (for non-grouped bars only)
@@ -930,7 +939,7 @@ export interface ChartOptions {
 	};
 }
 
-export interface AreaLinearGradientOptions {
+export interface LinearGradientOptions {
 	/**
 	 * x1, x2 attributes
 	 */
@@ -1000,14 +1009,24 @@ export interface LegendOptions {
 		 */
 		tile?: {
 			/**
-			 * Tile width.
+			 * Set width for 'rectangle' legend item tile element.
 			 */
 			width?: number;
 
 			/**
-			 * Tile height
+			 * Set height for 'rectangle' legend item tile element.
 			 */
 			height?: number;
+
+			/**
+			 * Set legend item shape type.
+			 */
+			type?: "circle" | "recntangle";
+
+			/**
+			 * Set the radius for 'circle' legend item tile type.
+			 */
+			r?: number;
 		};
 		/**
 		 * Set click event handler to the legend item.
