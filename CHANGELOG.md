@@ -1,3 +1,19 @@
+## [3.6.2](https://github.com/naver/billboard.js/compare/3.6.1...3.6.2) (2022-10-26)
+
+
+### Bug Fixes
+
+* **eventrect:** Fix eventReceiver coordinates ([6526c9e](https://github.com/naver/billboard.js/commit/6526c9e1d5061b8ff09d96d65a2fdcd3e58599d3)), closes [#2913](https://github.com/naver/billboard.js/issues/2913)
+
+## [3.6.1](https://github.com/naver/billboard.js/compare/3.6.0...3.6.1) (2022-10-21)
+
+
+### Bug Fixes
+
+* **interaction:** Fix incorrect data.onover/out event call ([1389d85](https://github.com/naver/billboard.js/commit/1389d8597e56a690d01f469a160c6b0bff8df1f1)), closes [#2901](https://github.com/naver/billboard.js/issues/2901)
+* **tooltip:** fix redundant onxxx callback calls ([85cdf36](https://github.com/naver/billboard.js/commit/85cdf36b8bfb6f211f1be152c3757fa3241dc982)), closes [#2901](https://github.com/naver/billboard.js/issues/2901)
+* **type:** add missing svg.classname type definition ([72e5c84](https://github.com/naver/billboard.js/commit/72e5c848925e7dc88aee7a6bc95824aa99a9c3c1)), closes [#2893](https://github.com/naver/billboard.js/issues/2893)
+
 # [3.6.0](https://github.com/naver/billboard.js/compare/3.5.1...3.6.0) (2022-09-29)
 
 
