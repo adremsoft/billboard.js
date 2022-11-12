@@ -10,7 +10,6 @@ export interface ArcOptions {
 	 *  Set corner radius of Arc(donut/gauge/pie/polar) shape.
 	 *  - **NOTE:**
 	 * 	  - Corner radius can't surpass the `(outerRadius - innerRadius) /2` of indicated shape.
-	 * 	  - When specified value is greater than the limitation, the radius value will be adjusted to meet the condition.
 	 */
 	cornerRadius?: number | ((id: string, value: number, outerRadius: number) => number) | {
 		ratio?: number
@@ -258,7 +257,7 @@ export interface GaugeOptions {
 		/**
 		 * Set formatter for the label on gauge.
 		 */
-		format?(this: Chart, value: any, ratio: number): string;
+		format?(this: Chart, value: any, ratio: number, id: string): string;
 
 		/**
 		 * Set customized min/max label text.
