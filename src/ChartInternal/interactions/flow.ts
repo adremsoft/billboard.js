@@ -212,7 +212,7 @@ export default {
 
 		const {data, scale: {x}} = $$;
 
-		if (data.targets == null) {
+		if (data.targets == null || data.targets[0] == null) {
 			return "";
 		}
 		const dataValues = data.targets[0].values;
