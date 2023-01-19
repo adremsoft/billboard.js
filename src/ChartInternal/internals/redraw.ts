@@ -11,8 +11,8 @@ export default {
 	redraw(options: any = {}): void {
 		const $$ = this;
 		const {config, state, $el} = $$;
-                if ($el == null) return; //!!AdRem!!
-		const {main} = $el;
+    if ($el == null) return; //!!AdRem!!
+		const {main, treemap} = $el;
 
 		state.redrawing = true;
 
@@ -29,7 +29,7 @@ export default {
 		// update legend and transform each g
 		if (wth.Legend && config.legend_show) {
 			options.withTransition = !!duration;
-			$$.updateLegend($$.mapToIds($$.data.targets), options, transitions);
+			!treemap && $$.updateLegend($$.mapToIds($$.data.targets), options, transitions);
 		} else if (wth.Dimension) {
 			// need to update dimension (e.g. axis.y.tick.values) because y tick values should change
 			// no need to update axis in it because they will be updated in redraw()
@@ -37,7 +37,7 @@ export default {
 		}
 
 		// update circleY based on updated parameters
-		if (!$$.hasArcType() || state.hasRadar) {
+		if (!treemap && (!$$.hasArcType() || state.hasRadar)) {
 			$$.updateCircleY && ($$.circleY = $$.updateCircleY());
 		}
 
@@ -88,10 +88,13 @@ export default {
 
 			// polar
 			$el.polar && $$.redrawPolar();
+
+			// treemap
+			treemap && $$.updateTreemap(durationForExit);
 		}
 
 		// @TODO: Axis & Radar type
-		if (!state.resizing && ($$.hasPointType() || state.hasRadar)) {
+		if (!state.resizing && !treemap && ($$.hasPointType() || state.hasRadar)) {
 			$$.updateCircle();
 		}
 
@@ -173,7 +176,7 @@ export default {
 
 	getRedrawList(shape, flow, flowFn, withTransition: boolean): Function[] {
 		const $$ = <any> this;
-		const {config, state: {hasAxis, hasRadar}, $el: {grid}} = $$;
+		const {config, state: {hasAxis, hasRadar, hasTreemap}, $el: {grid}} = $$;
 		const {cx, cy, xForText, yForText} = shape.pos;
 		const list: Function[] = [];
 
@@ -205,6 +208,10 @@ export default {
 
 		if (($$.hasPointType() || hasRadar) && !config.point_focus_only) {
 			$$.redrawCircle && list.push($$.redrawCircle(cx, cy, withTransition, flowFn));
+		}
+
+		if (hasTreemap) {
+			list.push($$.redrawTreemap(withTransition));
 		}
 
 		return list;

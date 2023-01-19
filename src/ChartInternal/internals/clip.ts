@@ -7,10 +7,11 @@ import {document, window} from "../../module/browser";
 export default {
 	initClip(): void {
 		const $$ = this;
-		const {clip} = $$.state;
+		const {clip, datetimeId} = $$.state;
 
 		// MEMO: clipId needs to be unique because it conflicts when multiple charts exist
-		clip.id = `${$$.state.datetimeId}-clip`;
+		clip.id = `${datetimeId}-clip`;
+
 		clip.idXAxis = `${clip.id}-xaxis`;
 		clip.idYAxis = `${clip.id}-yaxis`;
 		clip.idGrid = `${clip.id}-grid`;
