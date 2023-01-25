@@ -295,19 +295,24 @@ export default class ChartInternal {
 			const isDragZoom = $$.config.zoom_enabled && $$.config.zoom_type === "drag";
 
 			format.defaultAxisTime = d => {
-				const {x, zoom} = $$.scale;
-				const isZoomed = isDragZoom ? zoom :
-					zoom && x.orgDomain().toString() !== zoom.domain().toString();
+				if (d != null) { //!!AdRem!!
+					const {x, zoom} = $$.scale;
+					const isZoomed = isDragZoom ? zoom :
+						zoom && x.orgDomain()
+							.toString() !== zoom.domain()
+							.toString();
 
-				const specifier: string = (d.getMilliseconds() && ".%L") ||
-					(d.getSeconds() && ".:%S") ||
-					(d.getMinutes() && "%I:%M") ||
-					(d.getHours() && "%I %p") ||
-					(d.getDate() !== 1 && "%b %d") ||
-					(isZoomed && d.getDate() === 1 && "%b\'%y") ||
-					(d.getMonth() && "%-m/%-d") || "%Y";
+					const specifier: string = (d.getMilliseconds() && ".%L") ||
+						(d.getSeconds() && ".:%S") ||
+						(d.getMinutes() && "%I:%M") ||
+						(d.getHours() && "%I %p") ||
+						(d.getDate() !== 1 && "%b %d") ||
+						(isZoomed && d.getDate() === 1 && "%b\'%y") ||
+						(d.getMonth() && "%-m/%-d") || "%Y";
 
-				return format.axisTime(specifier)(d);
+					return format.axisTime(specifier)(d);
+				}
+				return '';
 			};
 		}
 
