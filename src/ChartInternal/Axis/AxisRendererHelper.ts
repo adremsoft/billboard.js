@@ -45,7 +45,8 @@ export default class AxisRendererHelper {
 			.text("0")
 			.call(el => {
 				try {
-					const {width, height} = el.node().getBBox();
+					const {width, height} = el.node()
+						.getBBox();
 
 					if (width && height) {
 						size.w = width;
@@ -70,13 +71,14 @@ export default class AxisRendererHelper {
 	 */
 	getTickTransformSetter(id: string): (selection: d3Selection, scale) => void {
 		const {config} = this;
+		// !!AdRem!!
 		const fn = id === "x" ?
-			value => `translate(${value + config.tickOffset},0)` :
+			value => `translate(${value + config.tickOffset | 0},0)` :
 			value => `translate(0,${value})`;
 
 		return (selection, scale) => {
 			selection.attr("transform", d => (
-				isValue(d) ? fn(Math.ceil(scale(d))) : null
+				isValue(d) ? fn(Math.ceil(scale(d)) ?? 0) : null
 			));
 		};
 	}
@@ -164,7 +166,8 @@ export default class AxisRendererHelper {
 		// to round float numbers from 'binary floating point'
 		// https://en.wikipedia.org/wiki/Double-precision_floating-point_format
 		// https://stackoverflow.com/questions/17849101/laymans-explanation-for-why-javascript-has-weird-floating-math-ieee-754-stand
-		const value = /\d+\.\d+0{5,}\d$/.test(v) ? +String(v).replace(/0+\d$/, "") : v;
+		const value = /\d+\.\d+0{5,}\d$/.test(v) ? +String(v)
+			.replace(/0+\d$/, "") : v;
 		const formatted = tickFormat ? tickFormat(value) : value;
 
 		return isDefined(formatted) ? formatted : "";
@@ -181,7 +184,8 @@ export default class AxisRendererHelper {
 			// https://github.com/naver/billboard.js/issues/2140
 			try {
 				transitionSelection = selection.transition(config.transition);
-			} catch (e) {}
+			} catch (e) {
+			}
 		}
 
 		return transitionSelection;
