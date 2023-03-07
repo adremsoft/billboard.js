@@ -2703,6 +2703,41 @@ var demos = {
 				}
 			}
 		],
+		DataXSort: [
+			{
+				options: {
+					title: {
+						text: "data.xSort = true"
+					},
+					data: {
+						x: "x",
+						columns: [
+							["x", 5, 2, 1, 4, 3],
+							["data1", 30, 280, 951, 400, 150],
+							["data2", 130, 357, 751, 200, 350]
+						],
+						type: "line"
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "data.xSort = false"
+					},
+					data: {
+						x: "x",
+						xSort: false,
+						columns: [
+							["x", 5, 2, 1, 4, 3],
+							["data1", 30, 280, 951, 400, 150],
+							["data2", 130, 357, 751, 200, 350]
+						],
+						type: "line"
+					}
+				}
+			}
+		],
 		Groups: [
 			{
 				options: {
@@ -4436,6 +4471,36 @@ d3.select(".chart_area")
 						],
 						type: "line"
 					}
+				}
+			}
+		],
+		FitPadding: [
+			{
+				options: {
+					title: {
+						text: "default padding (padding=true)"
+					},
+					data: {
+						columns: [
+							["data", 130, 100, 140, 35, 110, 50]
+						],
+						type: "area"
+					},
+					padding: true
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "padding='fit'"
+					},
+					data: {
+						columns: [
+							["data", 130, 100, 140, 35, 110, 50]
+						],
+						type: "area"
+					},
+					padding: "fit"
 				}
 			}
 		],
