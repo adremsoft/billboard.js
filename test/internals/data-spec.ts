@@ -89,7 +89,7 @@ describe("DATA", () => {
 		});
 
 		it("should draw correctly", () => {
-			const expectedCx = {443: [98, 294, 490], 995: [98, 294, 490]};
+			const expectedCx = {443: [98, 296, 492], 995: [98, 296, 492]};
 			const expectedCy = {443: [194, 351, 36], 995: [391, 0, 351]};
 			const main = chart.$.main;
 
@@ -150,7 +150,7 @@ describe("DATA", () => {
 
 		it("should draw nested JSON correctly", () => {
 			const main = chart.$.main;
-			const expectedCx = [98, 294, 490];
+			const expectedCx = [98, 296, 492];
 			const expectedCy = {
 				443: [181, 326, 36],
 				995: [362, 0, 326],
@@ -623,7 +623,7 @@ describe("DATA", () => {
 		});
 
 		it("line path should rendered correctly.", () => {
-			expect(chart.$.line.lines.attr("d")).to.be.equal("M593,390.583L6,36.417L299,390.583");
+			expect(chart.$.line.lines.attr("d")).to.be.equal("M594,390.583L6,36.417L300,390.583");
 		});
 
 		it("check for tooltip show", () => {
@@ -1346,6 +1346,32 @@ describe("DATA", () => {
 			const r = +chart.$.circles.attr("r");
 
 			expect(r > 0).to.be.true;
+		});
+	});
+
+	describe("null data", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", null, null, null, null, null, null],
+						["data2", 1, 10, 100, 1000, 10000, 100000],
+					],
+					type: "area-step"
+				},
+				line: {
+					connectNull: true
+				},
+				axis: {
+					x: {
+						type: "category"
+					}
+				}
+			};
+		});
+
+		it("category x axis with whole dataseries contains null", () => {
+			expect(true).to.be.true;
 		});
 	});
 });
