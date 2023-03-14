@@ -240,9 +240,11 @@ export default {
 			if (hasAxis && !hasRadar && !isMultipleX) {
 				const coords = eventReceiver.coords[index];
 
-				width = coords.w;
-				left += coords.x;
-				top += coords.y;
+				if (coords) {
+					width = coords.w;
+					left += coords.x;
+					top += coords.y;
+				}
 			}
 
 			const x = left + (mouse ? mouse[0] : 0) + (
