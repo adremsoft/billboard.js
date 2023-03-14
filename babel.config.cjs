@@ -6,7 +6,7 @@ module.exports = function(api) {
 		[
 			"@babel/env", {
 				"targets": {
-						 chrome: "86"
+						 chrome: "98"
 				},
 				"modules": false,
 				"loose": true,
@@ -26,7 +26,7 @@ module.exports = function(api) {
 			}
 		], [
 			"@babel/plugin-transform-arrow-functions", {
-				"spec": true
+				"spec": false
 			}
 		],
 		"@babel/proposal-object-rest-spread",
