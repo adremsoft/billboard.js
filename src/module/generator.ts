@@ -69,7 +69,7 @@ export function generateWait() {
 			for (let i = 0, t; (t = transitionsToWait[i]); i++) {
 				if (document.visibilityState !== "visible") {
 					callback?.();
-					return;
+					return false;
 				}
 
 				if (t === true || t.empty?.()) {
