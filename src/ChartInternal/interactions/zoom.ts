@@ -289,7 +289,7 @@ export default {
 		$$.$el.svg.on("wheel", () => {});
 
 		eventRect
-			.call(behaviour)
+			?.call(behaviour)
 			.on("dblclick.zoom", null);
 	},
 
