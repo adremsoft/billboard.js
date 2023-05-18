@@ -579,7 +579,7 @@ export default class ChartInternal {
 	setChartElements(): void {
 		const $$ = this;
 		const {$el: {
-			chart, svg, defs, main, tooltip, legend, title, grid,
+			chart, svg, defs, main, tooltip, legend, title, grid, needle,
 			arcs: arc,
 			circle: circles,
 			bar: bars,
@@ -589,6 +589,7 @@ export default class ChartInternal {
 			text: texts,
 		}} = $$;
 
+		// public
 		$$.api.$ = {
 			chart,
 			svg,
@@ -603,6 +604,7 @@ export default class ChartInternal {
 			bar: {bars},
 			candlestick,
 			line: {lines, areas},
+			needle,
 			text: {texts}
 		};
 	}

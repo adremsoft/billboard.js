@@ -1,3 +1,18 @@
+## [3.8.2](https://github.com/naver/billboard.js/compare/3.8.1...3.8.2) (2023-05-18)
+
+
+### Bug Fixes
+
+* **api:** fix classname setting for  eventRect element ([0a2fbde](https://github.com/naver/billboard.js/commit/0a2fbde0ac6bb5f207466c13e7ce578f176ff235)), closes [#3203](https://github.com/naver/billboard.js/issues/3203) [#3218](https://github.com/naver/billboard.js/issues/3218)
+
+## [3.8.1](https://github.com/naver/billboard.js/compare/3.8.0...3.8.1) (2023-05-04)
+
+
+### Bug Fixes
+
+* **api:** fix tooltip work for .load() with xs key ([13b9da7](https://github.com/naver/billboard.js/commit/13b9da7b9e2ad4ef0f2b4d8ad3d0f4770a1e79e4)), closes [#3194](https://github.com/naver/billboard.js/issues/3194)
+* **api:** Fix tooltip.show() to work zoomed with xs option ([cf82289](https://github.com/naver/billboard.js/commit/cf8228987b509b5d636b3c7c5eaa1ad2a5cb836a)), closes [#3187](https://github.com/naver/billboard.js/issues/3187)
+
 # [3.8.0](https://github.com/naver/billboard.js/compare/3.7.5...3.8.0) (2023-04-13)
 
 
