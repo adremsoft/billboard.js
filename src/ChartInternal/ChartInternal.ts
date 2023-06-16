@@ -484,6 +484,8 @@ export default class ChartInternal {
 
 		$$.callPluginHook("$init");
 
+		$$.initChartElements();
+
 		if (hasAxis) {
 			// Cover whole with rects for events
 			hasInteraction && $$.initEventRect?.();
@@ -494,8 +496,6 @@ export default class ChartInternal {
 			// Add Axis here, when clipPath is 'true'
 			config.clipPath && $$.axis?.init();
 		}
-
-		$$.initChartElements();
 
 		// Set targets
 		$$.updateTargets($$.data.targets);
@@ -540,7 +540,13 @@ export default class ChartInternal {
 		const types: string[] = [];
 
 		if (hasAxis) {
-			["bar", "bubble", "candlestick", "line"].forEach(v => {
+			const shapes = ["bar", "bubble", "candlestick", "line"];
+
+			if ($$.config.bar_front) {
+				shapes.push(shapes.shift() as string);
+			}
+
+			shapes.forEach(v => {
 				const name = capitalize(v);
 
 				if ((v === "line" && $$.hasTypeOf(name)) || $$.hasType(v)) {
