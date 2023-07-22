@@ -40,7 +40,7 @@ If you have any questions, checkout the previous posts or create a new one at:
 - [Issue with 'question' label](https://github.com/naver/billboard.js/issues?utf8=%E2%9C%93&q=label%3Aquestion)
 
 ## Supported chart types
-<img src="https://naver.github.io/billboard.js/img/chart-types.png?v=10" width=800>
+<img src="https://naver.github.io/billboard.js/img/chart-types.png?v=11" width=800>
 
 ## Download and Installation
 
@@ -98,6 +98,10 @@ You can download the compressed files for production
 - https://naver.github.io/billboard.js/release/latest/dist/theme/datalab.css
 - https://naver.github.io/billboard.js/release/latest/dist/theme/datalab.min.css
 
+
+#### dark
+- https://naver.github.io/billboard.js/release/latest/dist/theme/dark.css
+- https://naver.github.io/billboard.js/release/latest/dist/theme/dark.min.css
 
 #### insight
 - https://naver.github.io/billboard.js/release/latest/dist/theme/insight.css
