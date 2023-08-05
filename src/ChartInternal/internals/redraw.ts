@@ -106,6 +106,8 @@ export default {
 		initializing && $$.updateTypesElements();
 
 		$$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart);
+		$$.updateTooltipOnRedraw();
+
 		$$.callPluginHook("$redraw", options, duration);
 	},
 
