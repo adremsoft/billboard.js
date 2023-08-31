@@ -27,10 +27,6 @@ describe("PLUGIN: TABLE-VIEW", () => {
 		chart = util.generate(args);
 	});
 
-	after(() => {
-		util.destroyAll();
-	});
-
 	describe("default style", () => {
 		let spy;
 
@@ -150,9 +146,21 @@ describe("PLUGIN: TABLE-VIEW", () => {
 			// reset body width
 			document.body.style.width = ``;
 		});
+
+		it("set options", () => {
+			pluginArgs.categoryTitle = "<img src=''>MyCategory";
+			pluginArgs.title = '<SCRIPT >alert(1)<\/SCRIPT>어쩌고 저쩌고222';
+		});
+
+		it("check if 'title' and 'categoryTitle' are escaped", () => {
+			const table = document.querySelector(`table.${pluginArgs.class}`) as HTMLTableElement;
+
+			expect(table.querySelector("caption")?.innerHTML).to.not.include("script");
+			expect(table.querySelector("thead th")?.innerHTML).to.not.include("img");
+		});
 	});
 
-	describe("", () => { 
+	describe("Specify non table element as target", () => {
 		const divId = "tableView_div_wrapper";
 
 		before(() => {
@@ -249,6 +257,14 @@ describe("PLUGIN: TABLE-VIEW", () => {
 			table.querySelectorAll("th[scope=row]").forEach((th, i) => {
 				expect(th.textContent).to.be.equal(dates[i]);
 			});
+		});
+
+		it("when chart is destroyed, table also should destroyed.", () => {
+			chart.internal.charts.length = 1;  // force to make remove style also
+			chart.destroy();
+
+			expect(document.querySelector(".bb-tableview")).to.be.null;
+			expect(document.querySelector(`#${defaultStyle.id}`)).to.be.null;
 		});
 	});
 });

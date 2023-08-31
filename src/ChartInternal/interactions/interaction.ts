@@ -189,6 +189,10 @@ export default {
 					width = coords.w;
 					left += coords.x;
 					top += coords.y;
+				} else {
+					width = 0;
+					left = 0;
+					top = 0;
 				}
 			}
 
