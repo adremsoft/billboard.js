@@ -437,7 +437,7 @@ export default {
 	 */
 	unselectRect(): void {
 		const $$ = this;
-		const {config, $el: {circle, tooltip}} = $$;
+		const {$el: {circle, tooltip}} = $$;
 
 		$$.$el.svg.select(`.${$EVENT.eventRect}`).style("cursor", null);
 		$$.hideGridFocus();
@@ -447,7 +447,7 @@ export default {
 			$$._handleLinkedCharts(false);
 		}
 
-		circle && !config.point_focus_only && $$.unexpandCircles();
+		circle && !$$.isPointFocusOnly() && $$.unexpandCircles();
 		$$.expandBarTypeShapes(false);
 	},
 
@@ -518,7 +518,7 @@ export default {
 
 					// do nothing while dragging/flowing
 					if (state.dragging || state.flowing || $$.hasArcType() || eventOnSameIdx) {
-						eventOnSameIdx && $$.setTooltipPosition();
+						config.tooltip_show && eventOnSameIdx && $$.setTooltipPosition();
 						return;
 					}
 
