@@ -36,6 +36,11 @@ export default {
 			$$.updateDimension(true);
 		}
 
+		// update circleY based on updated parameters
+		if (!treemap && (!$$.hasArcType() || state.hasRadar)) {
+			$$.updateCircleY && ($$.circleY = $$.updateCircleY());
+		}
+
 		// Data empty label positioning and text.
 		config.data_empty_label_text && main.select(`text.${$TEXT.text}.${$COMMON.empty}`)
 			.attr("x", state.width / 2)
@@ -202,7 +207,7 @@ export default {
 				list.push($$.redrawText(xForText, yForText, flow, withTransition));
 		}
 
-		if (($$.hasPointType() || hasRadar) && !$$.isPointFocusOnly()) {
+		if (($$.hasPointType() || hasRadar) && !config.point_focus_only) {
 			$$.redrawCircle && list.push($$.redrawCircle(cx, cy, withTransition, flowFn));
 		}
 

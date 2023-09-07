@@ -10,10 +10,6 @@ import {$ARC} from "../../src/config/classes";
 import util from "../assets/util";
 import { $GAUGE } from "../../src/config/classes";
 
-function getDegree(str) {
-	return +str.replace(/.*\((.+)deg\).*/, "$1");
-}
-
 describe("SHAPE ARC: NEEDLE option", () => {
 	let chart;
 	let args = {
@@ -72,7 +68,7 @@ describe("SHAPE ARC: NEEDLE option", () => {
 			const {$el: {arcs, needle}} = chart.internal;
 
 			expect(needle.attr("d")).to.be.equal("M-5 20 A0 0 0 0 0 5 20 L2.5 -168.67999999999998 A1 1 0 0 0 -2.5 -168.67999999999998 L-5 20 Z");
-			expect(getDegree(needle.style("transform"))).to.equal(118.8);
+			expect(util.parseNum(needle.style("transform"))).to.equal(118.8);
 			expect(needle.style("fill")).to.equal("red");
 
 			expect(+arcs.select(`.${$ARC.chartArcsTitle}`).text()).to.be.equal(args.arc.needle.value);
@@ -181,13 +177,13 @@ describe("SHAPE ARC: NEEDLE option", () => {
 		it("check with startingAngle", done => {
 			const {$el: {needle}} = chart.internal;
 			
-			expect(getDegree(needle.style("transform"))).to.be.equal(114.592);
+			expect(util.parseNum(needle.style("transform"))).to.be.equal(114.592);
 
 			// when
 			chart.$.needle.updateHelper(50);
 
 			setTimeout(() => {
-				expect(getDegree(needle.style("transform"))).to.be.equal(294.592);
+				expect(util.parseNum(needle.style("transform"))).to.be.equal(294.592);
 
 				done();
 			}, 500);			
@@ -219,7 +215,7 @@ describe("SHAPE ARC: NEEDLE option", () => {
 			
 			expect(arcs.select(`.${$GAUGE.gaugeValue}`).text()).to.be.equal("25.0%");
 			expect(needle.attr("d")).to.be.equal("M-7.5 0 A1 1 0 0 0 7.5 0 L0 -303 A0 0 0 0 0 -0 -303 L-7.5 0 Z");
-			expect(getDegree(needle.style("transform"))).to.be.equal(-45);
+			expect(util.parseNum(needle.style("transform"))).to.be.equal(-45);
 		});
 
 		it("set options", () => {
@@ -230,7 +226,7 @@ describe("SHAPE ARC: NEEDLE option", () => {
 			const {$el: {arcs, needle}} = chart.internal;
 			
 			expect(arcs.select(`.${$GAUGE.gaugeValue}`).text()).to.be.equal("25.0%");
-			expect(getDegree(needle.style("transform"))).to.be.equal(0);
+			expect(util.parseNum(needle.style("transform"))).to.be.equal(0);
 		});
 
 		it("set options", () => {
@@ -317,13 +313,13 @@ describe("SHAPE ARC: NEEDLE option", () => {
 		it("check with startingAngle", done => {
 			const {$el: {needle}} = chart.internal;
 			
-			expect(getDegree(needle.style("transform"))).to.be.equal(-29.7938);
+			expect(util.parseNum(needle.style("transform"))).to.be.equal(-29.7938);
 
 			// when
 			chart.$.needle.updateHelper(100);
 
 			setTimeout(() => {
-				expect(getDegree(needle.style("transform"))).to.be.equal(74.4845);
+				expect(util.parseNum(needle.style("transform"))).to.be.equal(74.4845);
 
 				done();
 			}, 500);			
@@ -355,14 +351,14 @@ describe("SHAPE ARC: NEEDLE option", () => {
 			const {$el: {needle}} = chart.internal;
 			const path = needle.attr("d");
 			
-			expect(getDegree(needle.style("transform"))).to.be.equal(51.5155);
+			expect(util.parseNum(needle.style("transform"))).to.be.equal(51.5155);
 
 			new Promise((resolve) => {
 				// when
 				chart.$.needle.updateHelper(0);
 
 				setTimeout(() => {
-					expect(getDegree(needle.style("transform"))).to.be.closeTo(-74.4845, 1);
+					expect(util.parseNum(needle.style("transform"))).to.be.closeTo(-74.4845, 1);
 					resolve();
 				}, 500);
 			}).then(() => {
@@ -370,7 +366,7 @@ describe("SHAPE ARC: NEEDLE option", () => {
 				chart.$.needle.updateHelper(100);
 
 				setTimeout(() => {
-					expect(getDegree(needle.style("transform"))).to.be.equal(177.515);
+					expect(util.parseNum(needle.style("transform"))).to.be.equal(177.515);
 					
 					done();
 				}, 500);
@@ -406,7 +402,7 @@ describe("SHAPE ARC: NEEDLE option", () => {
 		it("basic", () => {
 			const {$el: {needle}} = chart.internal;
 			
-			expect(getDegree(needle.style("transform"))).to.be.equal(216);
+			expect(util.parseNum(needle.style("transform"))).to.be.equal(216);
 		});
 
 		it("toggle data", done => {
@@ -417,7 +413,7 @@ describe("SHAPE ARC: NEEDLE option", () => {
 				chart.toggle("data5");
 
 				setTimeout(() => {
-					expect(getDegree(needle.style("transform"))).to.be.equal(270);
+					expect(util.parseNum(needle.style("transform"))).to.be.equal(270);
 					resolve();
 				}, 500);
 			}).then(() => {
@@ -425,7 +421,7 @@ describe("SHAPE ARC: NEEDLE option", () => {
 				chart.toggle("data4");
 
 				setTimeout(() => {
-					expect(getDegree(needle.style("transform"))).to.be.equal(360);
+					expect(util.parseNum(needle.style("transform"))).to.be.equal(360);
 					
 					done();
 				}, 500);

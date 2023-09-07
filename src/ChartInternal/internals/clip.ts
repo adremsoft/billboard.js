@@ -61,11 +61,12 @@ export default {
 		const h = (isRotated ? (margin.top + height) + 10 : margin.bottom) + 20;
 
 		const x = isRotated ? -(1 + left) : -(left - 1);
+		const y = -Math.max(15, margin.bottom);
 		const w = isRotated ? margin.left + 20 : width + 10 + left;
 
 		node
 			.attr("x", x)
-			.attr("y", -2)
+			.attr("y", y)
 			.attr("width", w)
 			.attr("height", h);
 	},

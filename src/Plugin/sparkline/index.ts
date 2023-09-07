@@ -222,7 +222,7 @@ export default class Sparkline extends Plugin {
 
 		$$.state.event = e;
 
-		if ($$.isPointFocusOnly() && d) {
+		if ($$.config.point_focus_only && d) {
 			$$.showCircleFocus?.([d]);
 		}
 
@@ -235,7 +235,7 @@ export default class Sparkline extends Plugin {
 
 		$$.state.event = e;
 
-		$$.isPointFocusOnly() ?
+		$$.config.point_focus_only ?
 			$$.hideCircleFocus() : $$.unexpandCircles();
 
 		$$.hideTooltip();

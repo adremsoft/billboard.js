@@ -43,7 +43,7 @@ export default {
 		let opacity = config.point_opacity;
 
 		if (isUndefined(opacity)) {
-			opacity = config.point_show && !this.isPointFocusOnly() ? null : "0";
+			opacity = config.point_show && !config.point_focus_only ? null : "0";
 
 			opacity = isValue(this.getBaseValue(d)) ?
 				(this.isBubbleType(d) || this.isScatterType(d) ?
@@ -126,12 +126,10 @@ export default {
 	updateCircle(isSub = false): void {
 		const $$ = this;
 		const {config, state, $el} = $$;
-		const focusOnly = $$.isPointFocusOnly();
+		const focusOnly = config.point_focus_only;
 		const $root = isSub ? $el.subchart : $el;
 
 		if (config.point_show && !state.toggling) {
-			config.point_radialGradient && $$.updateLinearGradient();
-
 			const circles = $root.main.selectAll(`.${$CIRCLE.circles}`)
 				.selectAll(`.${$CIRCLE.circle}`)
 				.data(d => (
@@ -144,26 +142,12 @@ export default {
 
 			circles.enter()
 				.filter(Boolean)
-				.append($$.point("create", this, $$.pointR.bind($$), $$.updateCircleColor.bind($$)));
+				.append($$.point("create", this, $$.pointR.bind($$), $$.getStylePropValue($$.color)));
 
 			$root.circle = $root.main.selectAll(`.${$CIRCLE.circles} .${$CIRCLE.circle}`)
 				.style("stroke", $$.getStylePropValue($$.color))
 				.style("opacity", $$.initialOpacityForCircle.bind($$));
 		}
-	},
-
-	/**
-	 * Update circle color
-	 * @param {object} d Data object
-	 * @returns {string} Color string
-	 * @private
-	 */
-	updateCircleColor(d: IDataRow): string {
-		const $$ = this;
-		const fn = $$.getStylePropValue($$.color);
-
-		return $$.config.point_radialGradient ?
-			$$.getGradienColortUrl(d.id) : (fn ? fn(d) : null);
 	},
 
 	redrawCircle(cx: Function, cy: Function, withTransition: boolean, flow, isSub = false) {
@@ -176,7 +160,7 @@ export default {
 			return [];
 		}
 
-		const fn = $$.point("update", $$, cx, cy, $$.updateCircleColor.bind($$), withTransition, flow, selectedCircles);
+		const fn = $$.point("update", $$, cx, cy, $$.getStylePropValue($$.color), withTransition, flow, selectedCircles);
 		const posAttr = $$.isCirclePoint() ? "c" : "";
 
 		const t = getRandom();
@@ -207,10 +191,10 @@ export default {
 	 */
 	showCircleFocus(d?: IDataRow[]): void {
 		const $$ = this;
-		const {state: {hasRadar, resizing, toggling, transiting}, $el} = $$;
+		const {config, state: {hasRadar, resizing, toggling, transiting}, $el} = $$;
 		let {circle} = $el;
 
-		if (transiting === false && $$.isPointFocusOnly() && circle) {
+		if (transiting === false && config.point_focus_only && circle) {
 			const cx = (hasRadar ? $$.radarCircleX : $$.circleX).bind($$);
 			const cy = (hasRadar ? $$.radarCircleY : $$.circleY).bind($$);
 			const withTransition = toggling || isUndefined(d);
@@ -250,9 +234,9 @@ export default {
 	 */
 	hideCircleFocus(): void {
 		const $$ = this;
-		const {$el: {circle}} = $$;
+		const {config, $el: {circle}} = $$;
 
-		if ($$.isPointFocusOnly() && circle) {
+		if (config.point_focus_only && circle) {
 			$$.unexpandCircles();
 			circle.style("visibility", "hidden");
 		}
@@ -356,18 +340,6 @@ export default {
 
 		return isFunction(selectR) ?
 			selectR(d) : (selectR || $$.pointR(d) * 4);
-	},
-
-	/**
-	 * Check if point.focus.only option can be applied.
-	 * @returns {boolean}
-	 * @private
-	 */
-	isPointFocusOnly(): boolean {
-		const $$ = this;
-
-		return $$.config.point_focus_only &&
-			!$$.hasType("bubble") && !$$.hasType("scatter") && !$$.hasArcType(null, ["radar"]);
 	},
 
 	isWithinCircle(node: SVGElement, r?: number): boolean {
