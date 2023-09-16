@@ -665,7 +665,7 @@ export default {
 	 */
 	getDataIndexFromEvent(event): number {
 		const $$ = this;
-		const {config, state: {hasRadar, inputType, eventReceiver: {coords, rect}}} = $$;
+		const {config, state: {hasRadar, inputType, eventReceiver: {coords, rect, scale}}} = $$; //!!TK
 		let index;
 
 		if (hasRadar) {
@@ -687,7 +687,7 @@ export default {
 
 			index = findIndex(
 				coords,
-				isRotated ? e.clientY - rect.top : e.clientX - rect.left,
+				(isRotated ? e.clientY - rect.top : e.clientX - rect.left) * scale, //!!TK
 				0,
 				coords.length - 1,
 				isRotated

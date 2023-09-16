@@ -213,7 +213,7 @@ export default {
 		}
 
 		updateClientRect();
-		eventReceiver.scale = width / eventReceiver.rect.width;
+		eventReceiver.scale = width / eventReceiver.rect.width; //!!TK
 	},
 
 	/**
