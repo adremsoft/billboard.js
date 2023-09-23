@@ -22,10 +22,6 @@ module.exports = function(api) {
 			"@babel/plugin-proposal-class-properties", {
 				"loose": true
 			}
-		], [
-			"@babel/plugin-transform-arrow-functions", {
-				"spec": false
-			}
 		],
 		"@babel/proposal-object-rest-spread",
 		"add-module-exports",
