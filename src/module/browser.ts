@@ -32,15 +32,12 @@ function getGlobal() {
  * @returns {Array} fallback object array
  * @private
  */
-function getFallback(w) {
-	const hasRAF = typeof w?.requestAnimationFrame === "function";
-	const hasRIC = typeof w?.requestIdleCallback === "function";
-
+function getFallback(w = {}) {
 	return [
-		hasRAF ? w.requestAnimationFrame : (cb => setTimeout(cb, 1)),
-		hasRAF ? w.cancelAnimationFrame : (id => clearTimeout(id)),
-		hasRIC ? w.requestIdleCallback : requestAnimationFrame,
-		hasRIC ? w.cancelIdleCallback : cancelAnimationFrame
+		w?.requestAnimationFrame || (cb => setTimeout(cb, 1)),
+		w?.cancelAnimationFrame || (id => clearTimeout(id)),
+		w?.requestIdleCallback || window.requestAnimationFrame,
+		w?.cancelIdleCallback || window.cancelAnimationFrame
 	];
 }
 
