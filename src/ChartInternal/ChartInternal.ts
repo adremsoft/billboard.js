@@ -307,12 +307,12 @@ export default class ChartInternal {
 						(d.getMinutes() && "%I:%M") ||
 						(d.getHours() && "%I %p") ||
 						(d.getDate() !== 1 && "%b %d") ||
-						(isZoomed && d.getDate() === 1 && "%b\'%y") ||
+						(isZoomed && d.getDate() === 1 && "%b'%y") ||
 						(d.getMonth() && "%-m/%-d") || "%Y";
 
 					return format.axisTime(specifier)(d);
 				}
-				return '';
+				return "";
 			};
 		}
 
