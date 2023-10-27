@@ -43,7 +43,7 @@ export default {
 		let opacity = config.point_opacity;
 
 		if (isUndefined(opacity)) {
-			opacity = config.point_show && !config.point_focus_only ? null : "0";
+			opacity = config.point_show && !this.isPointFocusOnly?.() ? null : "0";
 
 			opacity = isValue(this.getBaseValue(d)) ?
 				(this.isBubbleType(d) || this.isScatterType(d) ?
@@ -126,10 +126,12 @@ export default {
 	updateCircle(isSub = false): void {
 		const $$ = this;
 		const {config, state, $el} = $$;
-		const focusOnly = config.point_focus_only;
+		const focusOnly = $$.isPointFocusOnly();
 		const $root = isSub ? $el.subchart : $el;
 
 		if (config.point_show && !state.toggling) {
+			config.point_radialGradient && $$.updateLinearGradient();
+
 			const circles = $root.main.selectAll(`.${$CIRCLE.circles}`)
 				.selectAll(`.${$CIRCLE.circle}`)
 				.data(d => (
@@ -142,12 +144,26 @@ export default {
 
 			circles.enter()
 				.filter(Boolean)
-				.append($$.point("create", this, $$.pointR.bind($$), $$.getStylePropValue($$.color)));
+				.append($$.point("create", this, $$.pointR.bind($$), $$.updateCircleColor.bind($$)));
 
 			$root.circle = $root.main.selectAll(`.${$CIRCLE.circles} .${$CIRCLE.circle}`)
 				.style("stroke", $$.getStylePropValue($$.color))
 				.style("opacity", $$.initialOpacityForCircle.bind($$));
 		}
+	},
+
+	/**
+	 * Update circle color
+	 * @param {object} d Data object
+	 * @returns {string} Color string
+	 * @private
+	 */
+	updateCircleColor(d: IDataRow): string {
+		const $$ = this;
+		const fn = $$.getStylePropValue($$.color);
+
+		return $$.config.point_radialGradient ?
+			$$.getGradienColortUrl(d.id) : (fn ? fn(d) : null);
 	},
 
 	redrawCircle(cx: Function, cy: Function, withTransition: boolean, flow, isSub = false) {
@@ -160,14 +176,14 @@ export default {
 			return [];
 		}
 
-		const fn = $$.point("update", $$, cx, cy, $$.getStylePropValue($$.color), withTransition, flow, selectedCircles);
+		const fn = $$.point("update", $$, cx, cy, $$.updateCircleColor.bind($$), withTransition, flow, selectedCircles);
 		const posAttr = $$.isCirclePoint() ? "c" : "";
 
 		const t = getRandom();
 		const opacityStyleFn = $$.opacityForCircle.bind($$);
 		const mainCircles: any[] = [];
 
-		$root.circle?.each(function(d) { // !!AdRem!!
+		$root.circle.each(function(d) {
 			let result: d3Selection | any = fn.bind(this)(d);
 
 			result = $T(result, withTransition || !rendered, t)
@@ -191,10 +207,10 @@ export default {
 	 */
 	showCircleFocus(d?: IDataRow[]): void {
 		const $$ = this;
-		const {config, state: {hasRadar, resizing, toggling, transiting}, $el} = $$;
+		const {state: {hasRadar, resizing, toggling, transiting}, $el} = $$;
 		let {circle} = $el;
 
-		if (transiting === false && config.point_focus_only && circle) {
+		if (transiting === false && circle && $$.isPointFocusOnly()) {
 			const cx = (hasRadar ? $$.radarCircleX : $$.circleX).bind($$);
 			const cy = (hasRadar ? $$.radarCircleY : $$.circleY).bind($$);
 			const withTransition = toggling || isUndefined(d);
@@ -234,9 +250,9 @@ export default {
 	 */
 	hideCircleFocus(): void {
 		const $$ = this;
-		const {config, $el: {circle}} = $$;
+		const {$el: {circle}} = $$;
 
-		if (config.point_focus_only && circle) {
+		if ($$.isPointFocusOnly() && circle) {
 			$$.unexpandCircles();
 			circle.style("visibility", "hidden");
 		}
@@ -342,10 +358,24 @@ export default {
 			selectR(d) : (selectR || $$.pointR(d) * 4);
 	},
 
+	/**
+	 * Check if point.focus.only option can be applied.
+	 * @returns {boolean}
+	 * @private
+	 */
+	isPointFocusOnly(): boolean {
+		const $$ = this;
+
+		return $$.config.point_focus_only &&
+			!$$.hasType("bubble") && !$$.hasType("scatter") && !$$.hasArcType(null, ["radar"]);
+	},
+
 	isWithinCircle(node: SVGElement, r?: number): boolean {
-		const mouse = getPointer(this.state.event, node);
+		const {config, state} = this;
+		const mouse = getPointer(state.event, node);
 		const element = d3Select(node);
 		const prefix = this.isCirclePoint(node) ? "c" : "";
+		const sensitivity = config.point_sensitivity === "radius" ? node.getAttribute("r") : config.point_sensitivity;
 		let cx = +element.attr(`${prefix}x`);
 		let cy = +element.attr(`${prefix}y`);
 
@@ -359,7 +389,7 @@ export default {
 
 		return Math.sqrt(
 			Math.pow(cx - mouse[0], 2) + Math.pow(cy - mouse[1], 2)
-		) < (r || this.config.point_sensitivity);
+		) < (r || sensitivity);
 	},
 
 	/**
@@ -453,7 +483,7 @@ export default {
 			const y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id));
 			const offset = lineOffset(d, i) || y0; // offset is for stacked area chart
 			const posX = x(d);
-			let posY = y(d) ?? y0; //!!AdRem
+			let posY = y(d);
 
 			// fix posY not to overflow opposite quadrant
 			if (config.axis_rotated && (
@@ -575,7 +605,7 @@ export default {
 
 			return mainCircles
 				.attr("cx", xPosFn)
-				.attr("cy", (...args) => yPosFn(...args) ?? 0) //!!Adrem
+				.attr("cy", yPosFn)
 				.style("fill", fillStyleFn);
 		}
 	},

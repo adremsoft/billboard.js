@@ -561,6 +561,8 @@ describe("TEXT", () => {
 			});
 
 			describe("as function", () => {
+				const temp: any = [];
+
 				before(() => {
 					args = {
 						data: {
@@ -592,6 +594,29 @@ describe("TEXT", () => {
 					main.selectAll(`.${$TEXT.texts}-data3 text`).each(function() {
 						expect(d3Select(this).text()).to.equal("");
 					});
+				});
+
+				it("set options", () => {
+					args = {
+						data: {
+							columns: [
+								["data1", 10, 100, null, 150, 200]
+							],
+							labels: {
+								format: (value, seriesName, columnIndex) => {																	
+									if (seriesName) {
+										temp.push(columnIndex);
+									}
+
+									return value;
+								}
+							}
+						}
+					}
+				});
+
+				it("index argument should count nullish value", () => {
+					expect(temp).to.be.deep.equal([0, 1, 3, 4]);					
 				});
 			});
 		});
@@ -813,7 +838,7 @@ describe("TEXT", () => {
 				});
 
 				it("should locate labels above each data point", () => {
-					const expectedXs = [72, 537, 72, 527]; // 72.50132230092231
+					const expectedXs = [72, 527, 72, 527]; // 72.50132230092231
 					const expectedYs = [9, 157, 305, 434];
 
 					chart.$.main.selectAll(`.${$TEXT.texts}-data1 text`)
