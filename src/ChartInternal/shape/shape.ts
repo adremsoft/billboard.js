@@ -248,6 +248,8 @@ export default {
 
 			if (isNumber(d)) {
 				value = d;
+			} else if ($$.isAreaRangeType(d)) {
+				value = $$.getBaseValue(d, "mid");
 			} else if (isStackNormalized) {
 				value = $$.getRatio("index", d, true);
 			} else if ($$.isBubbleZType(d)) {
