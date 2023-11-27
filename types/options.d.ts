@@ -422,6 +422,11 @@ export interface LegendOptions {
 	hide?: boolean | string[] | string;
 
 	/**
+	 * Set to all items have same width size.
+	 */
+	equally?: boolean;
+
+	/**
 	 * Change the position of legend.
 	 * Currently bottom, right and inset are supported.
 	 */
@@ -440,10 +445,6 @@ export interface LegendOptions {
 		y?: number;
 		step?: number;
 	};
-	/**
-	 * Padding between legend elements.
-	 */
-	padding?: number;
 
 	item?: {
 		/**
@@ -532,6 +533,21 @@ export interface LegendOptions {
 		 */
 		template?: ((this: Chart, title: string, color: string, data: DataItem[]) => void) | string;
 	};
+
+	/**
+	 * Padding between legend elements.
+	 */
+	padding?: number;
+
+	/**
+	 * Set formatter function for legend text.
+	 */
+	format?: (id: string) => string;
+
+	/**
+	 * Show full legend text value using system tooltip(via 'title' element).
+	 */
+	tooltip?: boolean;
 
 	/**
 	 * Whether to use custom points in legend.
