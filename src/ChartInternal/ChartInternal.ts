@@ -431,7 +431,7 @@ export default class ChartInternal {
 			}
 
 			// Append data background color filter definition
-			$$.generateDataLabelBackgroundColorFilter();
+			// $$.generateDataLabelBackgroundColorFilter();
 
 			// set color patterns
 			if (hasColorPatterns) {
