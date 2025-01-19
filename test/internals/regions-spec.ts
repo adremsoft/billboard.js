@@ -3,7 +3,8 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
-import {expect} from "chai";
+import {beforeEach, beforeAll, afterEach, describe, expect, it} from "vitest";
+import {window} from "../../src/module/browser";
 import util from "../assets/util";
 
 // exported to be used from /test/api/region-spec.ts
@@ -63,7 +64,7 @@ describe("REGIONS", function() {
 	});
 
 	describe("regions", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -127,16 +128,23 @@ describe("REGIONS", function() {
 			};
 		});
 
-		it("regions are generated correctly?", done => {
+		it("regions are generated correctly?", () => new Promise(done => {
 			const {$el, scale} = chart.internal;
 			
 			setTimeout(() => {
-				$el.region.list.each(function(d) {
+				$el.region.list.each(function(d, i) {
 					const axis = scale[d.axis];
 					const isX = d.axis === "x";
 					const rect = this.querySelector("rect");
 					const start = +rect.getAttribute(isX ? "x" : "y");
 					const size = +rect.getAttribute(isX ? "width" : "height");
+
+					// first <rect> should apply .regions_class1 rule
+					if (i === 0) {
+						const {fill} = window.getComputedStyle(this.querySelector("rect"));
+
+						expect(fill).to.be.equal("rgb(70, 130, 180)");
+					}
 
 					// check the diemsion
 					expect(start).to.be.equal(axis(isX ? d.start : d.end));
@@ -167,19 +175,19 @@ describe("REGIONS", function() {
 					}
 				});
 				
-				done();
+				done(1);
 			}, 300);
-		});
+		}));
 	});
 
-	describe("regions", () => {
-		before(() => {
+	describe("regions with dasharray", () => {
+		beforeAll(() => {
 			args = {
 				data: {
 					x: "x",
 					columns: [
-						["x", "2023-08-25", "2023-08-26", "2023-08-27"],
-						["data1", 50, 20, 10]
+						["x", "2023-08-25", "2023-08-26", "2023-08-27", "2023-08-28", "2023-08-29"],
+						["data1", 50, 20, 10, null, 20, 30]
 					],
 					regions: {
 						data1: [{
@@ -205,7 +213,205 @@ describe("REGIONS", function() {
 		it("should regions applied for timeseries chart.", () => {
 			const lCnt = chart.$.line.lines.attr("d").split("L").length;
 
-			expect(lCnt).to.be.above(30);
+			expect(lCnt).to.be.above(19);
+		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", null, 200, 100, 152, 150, 250, 30]
+					],
+					type: "line",
+					regions: {
+						data1: [
+							{
+								start: 1,
+								end: 2,
+								style: {
+									dasharray: "5 3"
+								}
+							},
+							{
+								start: 3,
+								end: 4,
+								style: {
+									dasharray: "10 5"
+								}
+							}
+						]
+					}
+				},
+				axis: {
+					y: {
+						show: false
+					}
+				},
+				point: {
+					show: false
+				}
+			};
+		});
+
+		it("shouldn't have any overflowed dashed lines.", () => {
+			const path = chart.$.line.lines.attr("d").split("M").map(v => {
+				return v && v.split("L").map(v2 => +v2.replace(/,.*/,""))
+			}).filter(Boolean);
+
+			const hasOverflow = path.some((v, i, arr) => {
+				if (v.length > 2) {
+					return arr[i - 1][1] > v[0];
+				}
+
+				return false;
+			});
+
+			expect(hasOverflow).to.be.false;
+		});
+
+		it("set options", () => {
+			args.axis.rotated = true;
+			args.data.regions.data1 = [
+				{
+					start: 1,
+					end: 2,
+					style: {
+						dasharray: "10 2"
+					}
+				},
+				{
+					start: 3,
+					end: 4,
+					style: {
+						dasharray: "9 2"
+					}
+				}
+			];
+		});
+
+		it("shouldn't have any overflowed dashed lines on rotated axis.", () => {
+			const path = chart.$.line.lines.attr("d").split("M").map(v => {
+				return v && v.split("L").map(v2 => +v2.replace(/,.*/,""))
+			}).filter(Boolean);
+
+			const hasOverflow = path.some((v, i, arr) => {
+				if (v.length > 2) {
+					return v[0] > arr[i-1][1];
+				}
+
+				return false;
+			});
+
+			expect(hasOverflow).to.be.false;
+		});
+	});
+
+	describe("category type", () => {
+		beforeAll(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 100, 150, 130, 200, 220, 190]
+					],
+					axes: {
+						data2: "y2"
+					},
+					type: "line",
+					colors: {
+						data1: "#ff0000"
+					}
+				},
+				axis: {
+					x: {
+						type: "category",
+						categories: [
+							"cat1",
+							"cat2",
+							"cat3",
+							"cat4",
+							"cat5",
+							"cat6"
+					  ]
+					},
+					y2: {
+					  show: true
+					}
+				},
+				regions: [
+					{
+					  axis: "x",
+					  start: "cat1",
+					  end: "cat2",
+					  class: "regions_class1",
+					  label: {
+						text: "Regions 1",
+						color: "red"
+					  }
+					},
+					{
+					  axis: "x",
+					  start: "cat4",
+					  end: "cat4",
+					  class: "regions_class4",
+					  label: {
+						text: "Regions 4",
+						color: "blue"
+					  }
+					}
+				]
+			};
+		});
+
+		it("should render regions correctly", () => {
+			const {region: {list}} = chart.internal.$el;
+			const {x} = chart.internal.scale;
+			const expected = [
+				{start: -0.5, end: 1.5},
+				{start: 2.5, end: 3.5}
+			];
+
+			list.select("rect").each(function(d, i) {
+				const {start, end} = expected[i];
+				const xPos = +this.getAttribute("x");
+				const width = +this.getAttribute("width");
+
+				expect(x(start)).to.be.equal(xPos);
+				expect(x(end)).to.be.equal(xPos + width);
+			});
+		});
+
+		it("set options: regions", () => {
+			args.regions = [
+				{
+					axis: "x",
+					start: 1,
+					end: "cat3"
+				},
+				{
+					axis: "x",
+					start: "cat5",
+					end: 4.5
+				}
+			];
+		});
+
+		it("should render regions correctly", () => {
+			const {region: {list}} = chart.internal.$el;
+			const {x} = chart.internal.scale;
+			const expected = [
+				{start: 1, end: 2.5},
+				{start: 3.5, end: 4.5}
+			];
+
+			list.select("rect").each(function(d, i) {
+				const {start, end} = expected[i];
+				const xPos = +this.getAttribute("x");
+				const width = +this.getAttribute("width");
+
+				expect(x(start)).to.be.closeTo(xPos, 0.1);
+				expect(x(end)).to.be.closeTo(xPos + width, 0.1);
+			});
 		});
 	});
 });

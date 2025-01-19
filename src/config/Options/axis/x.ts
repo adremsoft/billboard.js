@@ -35,6 +35,28 @@ export default {
 	axis_x_show: true,
 
 	/**
+	 * Force the x axis to interact as single rather than multiple x axes.
+	 * - **NOTE:** The tooltip event will be triggered nearing each data points(for multiple xs) rather than x axis based(as single x does) in below condition:
+	 *   - for `bubble` & `scatter` type
+	 *   - when `data.xs` is set
+	 *   - when `tooltip.grouped=false` is set
+	 *     - `tooltip.grouped` options will take precedence over `axis.forceSingleX` option.
+	 * @name axis․x․forceAsSingle
+	 * @memberof Options
+	 * @type {boolean}
+	 * @default false
+	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.ForceAsSingle)
+	 * @example
+	 * axis: {
+	 *   x: {
+	 *      // will work as single x axis
+	 *      forceAsSingle: true
+	 *   }
+	 * }
+	 */
+	axis_x_forceAsSingle: false,
+
+	/**
 	 * Set type of x axis.<br><br>
 	 * **Available Values:**
 	 * - category
@@ -47,7 +69,6 @@ export default {
 	 *   - the x values specified by [`data.x`](#.data%25E2%2580%25A4x)(or by any equivalent option), must be exclusively-positive.
 	 *   - x axis min value should be >= 0.
 	 *   - for 'category' type, `data.xs` option isn't supported.
-	 *
 	 * @name axis․x․type
 	 * @memberof Options
 	 * @type {string}
@@ -63,7 +84,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	axis_x_type: <"category"|"indexed"|"log"|"timeseries"> "indexed",
+	axis_x_type: <"category" | "indexed" | "log" | "timeseries">"indexed",
 
 	/**
 	 * Set how to treat the timezone of x values.<br>
@@ -95,7 +116,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	axis_x_categories: <string[]> [],
+	axis_x_categories: <string[]>[],
 
 	/**
 	 * centerize ticks on category axis.
@@ -141,7 +162,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	axis_x_tick_format: <Function|string|undefined> undefined,
+	axis_x_tick_format: <Function | string | undefined>undefined,
 
 	/**
 	 * Setting for culling ticks.
@@ -219,7 +240,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	axis_x_tick_count: <number|undefined>undefined,
+	axis_x_tick_count: <number | undefined>undefined,
 
 	/**
 	 * Show or hide x axis tick line.
@@ -258,6 +279,32 @@ export default {
 	 * }
 	 */
 	axis_x_tick_text_show: true,
+
+	/**
+	 * Set the first/last axis tick text to be positioned inside of the chart on non-rotated axis.
+	 * @name axis․x․tick․text․inner
+	 * @memberof Options
+	 * @type {boolean|object}
+	 * @default false
+	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.XAxisTickInner)
+	 * @example
+	 * axis: {
+	 *   x: {
+	 *     tick: {
+	 *       text: {
+	 *          inner: true,
+	 *
+	 *          // or specify each position of the first and last tick text
+	 *          inner: {
+	 *       	   first: true,
+	 *       	   last: true
+	 *       	}
+	 *       }
+	 *     }
+	 *   }
+	 * }
+	 */
+	axis_x_tick_text_inner: <{first?: boolean, last?: boolean} | boolean>false,
 
 	/**
 	 * Set the x Axis tick text's position relatively its original position
@@ -324,7 +371,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	axis_x_tick_values: <(string|Date|number)[]|(()=> number[])|null> null,
+	axis_x_tick_values: <(string | Date | number)[] | (() => number[]) | null>null,
 
 	/**
 	 * Rotate x axis tick text if there is not enough space for 'category' and 'timeseries' type axis.
@@ -423,7 +470,6 @@ export default {
 	 */
 	axis_x_tick_multiline: true,
 
-
 	/**
 	 * Set tick width
 	 * - **NOTE:**
@@ -441,7 +487,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	axis_x_tick_width: <number|null> null,
+	axis_x_tick_width: <number | null>null,
 
 	/**
 	 * Set to display system tooltip(via `<title>` element) for tick text
@@ -484,7 +530,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	axis_x_max: <number|undefined> undefined,
+	axis_x_max: <number | undefined>undefined,
 
 	/**
 	 * Set min value of x axis range.
@@ -509,7 +555,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	axis_x_min: <number|undefined> undefined,
+	axis_x_min: <number | undefined>undefined,
 
 	/**
 	 * Change the direction of x axis.<br><br>
@@ -570,7 +616,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	axis_x_padding: <number|{left?: number; right?: number;}> {},
+	axis_x_padding: <number | {left?: number, right?: number}>{},
 
 	/**
 	 * Set height of x axis.<br><br>
@@ -586,10 +632,11 @@ export default {
 	 *   }
 	 * }
 	 */
-	axis_x_height: <number|undefined> undefined,
+	axis_x_height: <number | undefined>undefined,
 
 	/**
-	 * Set default extent for subchart and zoom. This can be an array or function that returns an array.
+	 * Set extent for subchart and zoom(drag only). This can be an array or function that returns an array.
+	 * - **NOTE:** Specifying value, will limit the zoom scope selection within.
 	 * @name axis․x․extent
 	 * @memberof Options
 	 * @type {Array|Function}
@@ -616,7 +663,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	axis_x_extent: <(number|string)[]|Function|undefined> undefined,
+	axis_x_extent: <(number | string)[] | Function | undefined>undefined,
 
 	/**
 	 * Set label on x axis.<br><br>

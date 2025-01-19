@@ -22,8 +22,13 @@ export function callDone(fn, resizeAfter = false) {
 export default {
 	load(rawTargets, args): void {
 		const $$ = this;
-		const {data} = $$;
+		const {axis, data, org, scale} = $$;
 		const {append} = args;
+		const zoomState = {
+			domain: <any>null,
+			currentDomain: <any>null,
+			x: <any>null
+		};
 		let targets = rawTargets;
 
 		if (targets) {
@@ -45,8 +50,7 @@ export default {
 			data.targets.forEach(d => {
 				for (let i = 0; i < targets.length; i++) {
 					if (d.id === targets[i].id) {
-						d.values = append ?
-							d.values.concat(targets[i].values) : targets[i].values;
+						d.values = append ? d.values.concat(targets[i].values) : targets[i].values;
 
 						targets.splice(i, 1);
 						break;
@@ -60,12 +64,49 @@ export default {
 		// Set targets
 		$$.updateTargets(data.targets);
 
+		if (scale.zoom) {
+			zoomState.x = axis.isCategorized() ?
+				scale.x.orgScale() :
+				(org.xScale || scale.x).copy();
+			zoomState.domain = $$.getXDomain(data.targets); // get updated xDomain
+
+			zoomState.x.domain(zoomState.domain);
+			zoomState.currentDomain = $$.zoom.getDomain(); // current zoomed domain
+
+			// reset zoom state when new data loaded is out of range
+			if (!$$.withinRange(zoomState.currentDomain, undefined, zoomState.domain)) {
+				scale.x.domain(zoomState.domain);
+				scale.zoom = null;
+				$$.$el.eventRect.property("__zoom", null);
+			}
+		}
+
 		// Redraw with new targets
 		$$.redraw({
 			withUpdateOrgXDomain: true,
 			withUpdateXDomain: true,
 			withLegend: true
 		});
+
+		// when load happens on zoom state
+		if (scale.zoom) {
+			// const x = (axis.isCategorized() ? scale.x.orgScale() : (org.xScale || scale.x)).copy();
+
+			org.xDomain = zoomState.domain;
+			org.xScale = zoomState.x;
+
+			if (axis.isCategorized()) {
+				zoomState.currentDomain = $$.getZoomDomainValue(zoomState.currentDomain);
+				org.xDomain = $$.getZoomDomainValue(org.xDomain);
+				org.xScale = zoomState.x.domain(org.xDomain);
+			}
+
+			$$.updateCurrentZoomTransform(zoomState.x, zoomState.currentDomain);
+
+			// https://github.com/naver/billboard.js/issues/3878
+		} else if (org.xScale) {
+			org.xScale.domain(org.xDomain);
+		}
 
 		// Update current state chart type and elements list after redraw
 		$$.updateTypesElements();
@@ -95,6 +136,7 @@ export default {
 	unload(rawTargetIds, customDoneCb): void {
 		const $$ = this;
 		const {state, $el, $T} = $$;
+		const hasLegendDefsPoint = !!$$.hasLegendDefsPoint?.();
 		let done = customDoneCb;
 		let targetIds = rawTargetIds;
 
@@ -122,17 +164,25 @@ export default {
 			.call(endall, done);
 
 		targetIds.forEach(id => {
+			const suffixId = $$.getTargetSelectorSuffix(id);
+
 			// Reset fadein for future load
 			state.withoutFadeIn[id] = false;
 
 			// Remove target's elements
 			if ($el.legend) {
-				$el.legend.selectAll(`.${$LEGEND.legendItem}${$$.getTargetSelectorSuffix(id)}`).remove();
+				$el.legend.selectAll(`.${$LEGEND.legendItem}${suffixId}`).remove();
 			}
 
 			// Remove target
 			$$.data.targets = $$.data.targets.filter(t => t.id !== id);
+
+			// Remove custom point def element
+			hasLegendDefsPoint && $el.defs?.select(`#${$$.getDefsPointId(suffixId)}`).remove();
 		});
+
+		// since treemap uses different data types, it needs to be transformed
+		state.hasFunnel && $$.updateFunnel($$.data.targets);
 
 		// since treemap uses different data types, it needs to be transformed
 		state.hasTreemap && $$.updateTargetsForTreemap($$.data.targets);

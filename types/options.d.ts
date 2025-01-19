@@ -13,6 +13,7 @@ import {
 	BubbleOptions,
 	CandlestickOptions,
 	DonutOptions,
+	FunnelOptions,
 	GaugeOptions,
 	LineOptions,
 	PieOptions,
@@ -158,8 +159,12 @@ export interface ChartOptions {
 	resize?: {
 		/**
 		 * Indicate if the chart should automatically get resized when the window gets resized.
+		 * - **NOTE:** Available options
+		 *   - true: Enables automatic resize.
+		 *   - false: Disables automatic resize.
+		 *   - "viewBox": Enables automatic resize, and size will be fixed based on the viewbox.
 		 */
-		auto?: boolean;
+		auto?: boolean | "viewBox";
 
 		/**
 		 * Set resize timer option.
@@ -243,7 +248,13 @@ export interface ChartOptions {
 				 */
 				preventDefault?: boolean | number;
 			};
-		}
+		},
+
+		/**
+		 * Enable or disable "onout" event.
+	 	 * When is disabled, defocus(hiding tooltip, focused gridline, etc.) event won't work.
+		 */
+		onout?: boolean;
 	};
 
 	transition?: {
@@ -284,6 +295,7 @@ export interface ChartOptions {
 	bubble?: BubbleOptions;
 	candlestick?: CandlestickOptions;
 	donut?: DonutOptions;
+	funnel?: FunnelOptions;
 	gauge?: GaugeOptions;
 	line?: LineOptions;
 	polar?: PolarOptions;
@@ -407,6 +419,13 @@ export interface RegionOptions {
 	start?: string | number | Date;
 	end?: string | number | Date;
 	class?: string;
+	label?: {
+		text?: string;
+		x?: number;
+		y?: number;
+		color?: string;
+		rotated?: boolean;
+	}
 }
 
 export interface LegendOptions {
@@ -430,7 +449,7 @@ export interface LegendOptions {
 	 * Change the position of legend.
 	 * Currently bottom, right and inset are supported.
 	 */
-	position?: string;
+	position?: "bottom" | "right" | "inset";
 
 	/**
 	 * Change inset legend attributes.
@@ -440,7 +459,7 @@ export interface LegendOptions {
 	 * - step: defines the max step the lagend has (e.g. If 2 set and legend has 3 legend item, the legend 2 columns).
 	 */
 	inset?: {
-		anchor?: string;
+		anchor?: "top-left" | "top-right" | "bottom-left" | "bottom-right";
 		x?: number;
 		y?: number;
 		step?: number;
@@ -497,19 +516,19 @@ export interface LegendOptions {
 		 *    - When set, default `click` interaction will be disabled.
 		 *    - When `interaction.dblclick=true` is set, will be called on double click.
 		 */
-		onclick?(this: Chart, id: string): void;
+		onclick?(this: Chart, id: string, visible: boolean): void;
 
 		/**
 		 * Set mouseover event handler to the legend item.
 		 *  - **NOTE:** When set, default `mouseover` interaction will be disabled.
 		 */
-		onover?(this: Chart, id: string): void;
+		onover?(this: Chart, id: string, visible: boolean): void;
 
 		/**
 		 * Set mouseout event handler to the legend item.
 		 *  - **NOTE:** When set, default `mouseout` interaction will be disabled.
 		 */
-		onout?(this: Chart, id: string): void;
+		onout?(this: Chart, id: string, visible: boolean): void;
 	};
 
 	/**
@@ -542,7 +561,7 @@ export interface LegendOptions {
 	/**
 	 * Set formatter function for legend text.
 	 */
-	format?: (id: string) => string;
+	format?: (id: string, dataId?: string) => string;
 
 	/**
 	 * Show full legend text value using system tooltip(via 'title' element).
@@ -746,6 +765,14 @@ export interface SubchartOptions {
 					 * Show or hide x axis tick text.
 					 */
 					show?: boolean;
+
+					/**
+					 * 	 * Set the first/last axis tick text to be positioned inside of the chart on non-rotated axis.
+					 */
+					inner?: boolean | {
+						first?: boolean;
+						last?: boolean;
+					}
 				};
 			};
 		};
@@ -1097,7 +1124,7 @@ export interface Data {
 	/**
 	 * Set chart type at once.
 	 * If this option is specified, the type will be applied to every data. This setting can be overwritten by data.types.
-	 * - Available Values: area, area-line-range, area-spline, area-spline-range, area-step, bar, bubble, candlestick, donut, gauge, line, pie, radar, scatter, spline, step
+	 * - Available Values: area, area-line-range, area-spline, area-spline-range, area-step, area-step-range, bar, bubble, candlestick, donut, gauge, line, pie, radar, scatter, spline, step
 	 */
 	type?: ChartTypes;
 
@@ -1321,13 +1348,13 @@ export interface Data {
 
 	/**
 	 * Set a callback for minimum data
-	 * - NOTE: For 'area-line-range' and 'area-spline-range', mid data will be taken for the comparison
+	 * - NOTE: For 'area-line-range', 'area-step-range' and 'area-spline-range', mid data will be taken for the comparison
 	 */
 	onmin?(this: Chart, d: DataItem[]): void;
 
 	/**
 	 * Set a callback for maximum data
-	 * - NOTE: For 'area-line-range' and 'area-spline-range', mid data will be taken for the comparison
+	 * - NOTE: For 'area-line-range', 'area-step-range' and 'area-spline-range', mid data will be taken for the comparison
 	 */
 	onmax?(this: Chart, d: DataItem[]): void;
 

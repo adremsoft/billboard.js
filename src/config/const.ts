@@ -12,10 +12,12 @@ export const TYPE = {
 	AREA_SPLINE: "area-spline",
 	AREA_SPLINE_RANGE: "area-spline-range",
 	AREA_STEP: "area-step",
+	AREA_STEP_RANGE: "area-step-range",
 	BAR: "bar",
 	BUBBLE: "bubble",
 	CANDLESTICK: "candlestick",
 	DONUT: "donut",
+	FUNNEL: "funnel",
 	GAUGE: "gauge",
 	LINE: "line",
 	PIE: "pie",
@@ -37,10 +39,12 @@ export const TYPE_METHOD_NEEDED = {
 	AREA_SPLINE: "initArea",
 	AREA_SPLINE_RANGE: "initArea",
 	AREA_STEP: "initArea",
+	AREA_STEP_RANGE: "initArea",
 	BAR: "initBar",
 	BUBBLE: "initCircle",
 	CANDLESTICK: "initCandlestick",
 	DONUT: "initArc",
+	FUNNEL: "initFunnel",
 	GAUGE: "initArc",
 	LINE: "initLine",
 	PIE: "initArc",
@@ -62,11 +66,13 @@ export const TYPE_BY_CATEGORY = {
 		TYPE.AREA_SPLINE,
 		TYPE.AREA_SPLINE_RANGE,
 		TYPE.AREA_LINE_RANGE,
-		TYPE.AREA_STEP
+		TYPE.AREA_STEP,
+		TYPE.AREA_STEP_RANGE
 	],
 	AreaRange: [
 		TYPE.AREA_SPLINE_RANGE,
-		TYPE.AREA_LINE_RANGE
+		TYPE.AREA_LINE_RANGE,
+		TYPE.AREA_STEP_RANGE
 	],
 	Arc: [
 		TYPE.PIE,
@@ -83,11 +89,13 @@ export const TYPE_BY_CATEGORY = {
 		TYPE.AREA_SPLINE_RANGE,
 		TYPE.AREA_LINE_RANGE,
 		TYPE.STEP,
-		TYPE.AREA_STEP
+		TYPE.AREA_STEP,
+		TYPE.AREA_STEP_RANGE
 	],
 	Step: [
 		TYPE.STEP,
-		TYPE.AREA_STEP
+		TYPE.AREA_STEP,
+		TYPE.AREA_STEP_RANGE
 	],
 	Spline: [
 		TYPE.SPLINE,

@@ -36,7 +36,7 @@ function showHide(show: boolean, targetIdsValue: string[], options: any): void {
 			// https://github.com/naver/billboard.js/issues/1758
 			if (!show && hiddenIds.length === 0) {
 				targets.style("display", "none");
-				callFn($$.config.data_onhidden, this, targetIds);
+				callFn($$.config?.data_onhidden, this, targetIds);
 			}
 
 			targets.style("opacity", opacity);
@@ -119,9 +119,9 @@ export default {
 	 * // toggle 'data1' and 'data3'
 	 * chart.toggle(["data1", "data3"]);
 	 */
-	toggle(targetIds: string|string[], options = {}): void {
+	toggle(targetIds: string | string[], options = {}): void {
 		const $$ = this.internal;
-		const targets = {show: <string[]> [], hide: <string[]> []};
+		const targets = {show: <string[]>[], hide: <string[]>[]};
 
 		// sort show & hide target ids
 		$$.mapToTargetIds(targetIds)
@@ -133,4 +133,3 @@ export default {
 		targets.hide.length && setTimeout(() => this.hide(targets.hide, options), 0);
 	}
 };
-

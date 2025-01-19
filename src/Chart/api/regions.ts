@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import {$REGION} from "../../config/classes";
-import {getOption, extend, isTabVisible} from "../../module/util";
+import {extend, getOption, isTabVisible} from "../../module/util";
 
 type RegionsParam = {axis?: "add" | "update", class?: string, start?: number, end?: number}[];
 
@@ -36,13 +36,22 @@ function regionsFn(regions: RegionsParam, isAdd = false): RegionsParam {
  * @function regions
  * @instance
  * @memberof Chart
- * @param {Array} regions Regions will be replaced with this argument. The format of this argument is the same as regions.
+ * @param {Array} regions Regions will be replaced with this argument. The format of this argument is the same as [regions](./Options.html#.regions) option.
  * @returns {Array} regions
  * @example
  * // Show 2 regions
  * chart.regions([
  *    {axis: "x", start: 5, class: "regionX"},
- *    {axis: "y", end: 50, class: "regionY"}
+ *    {
+ *      axis: "y", end: 50, class: "regionY",
+ *      label: {
+ *      	text: "Region Text",
+ *      	x: 5,  // position relative of the initial x coordinate
+ *      	y: 5,  // position relative of the initial y coordinate
+ *      	color: "red",  // color string
+ *      	rotated: true  // make text to show in vertical or horizontal
+ *      }
+ *    }
  * ]);
  */
 const regions = function(regions: RegionsParam): RegionsParam {
@@ -56,19 +65,34 @@ extend(regions, {
 	 * @function regions․add
 	 * @instance
 	 * @memberof Chart
-	 * @param {Array|object} regions New region will be added. The format of this argument is the same as regions and it's possible to give an Object if only one region will be added.
+	 * @param {Array|object} regions New region will be added. The format of this argument is the same as [regions](./Options.html#.regions) and it's possible to give an Object if only one region will be added.
 	 * @returns {Array} regions
 	 * @example
 	 * // Add a new region
 	 * chart.regions.add(
-	 *    {axis: "x", start: 5, class: "regionX"}
+	 *    {
+	 *      axis: "x", start: 5, class: "regionX",
+	 *      label: {
+	 *      	text: "Region Text",
+	 *      	color: "red"  // color string
+	 *      }
+	 *    }
 	 * );
 	 *
 	 * // Add new regions
 	 * chart.regions.add([
 	 *    {axis: "x", start: 5, class: "regionX"},
-	 *    {axis: "y", end: 50, class: "regionY"}
-	 *]);
+	 *    {
+	 *      axis: "y", end: 50, class: "regionY",
+	 *      label: {
+	 *      	text: "Region Text",
+	 *      	x: 5,  // position relative of the initial x coordinate
+	 *      	y: 5,  // position relative of the initial y coordinate
+	 *      	color: "red",  // color string
+	 *      	rotated: true  // make text to show in vertical or horizontal
+	 *      }
+	 *    }
+	 * ]);
 	 */
 	add: function(regions: RegionsParam): RegionsParam {
 		return regionsFn.bind(this)(regions, true);

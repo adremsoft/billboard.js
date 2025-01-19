@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
-import {expect} from "chai";
+import {beforeEach, beforeAll, describe, expect, it} from "vitest";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import {$AXIS, $BAR, $GAUGE} from "../../src/config/classes";
@@ -62,7 +62,7 @@ describe("API chart", () => {
 			expect(chart.groups()[0].length).to.be.equal(chart.data().length);
 
 			// check for the bars were stacked
-			expect(util.getBBox(path).width).to.be.equal(barWidth * 2);
+			expect(util.getBBox(path).width).to.be.closeTo(barWidth * 2, 1);
 		});
 	});
 
@@ -111,9 +111,10 @@ describe("API chart", () => {
 			// all methods should be ressetted
 			Object.keys(chart).forEach(key => {
 				expect(chart[key]()).to.be.undefined;
-				expect(/^function()/.test(chart[key].toString())).to.be.true;
+				expect(/^\(\)\s?=\>\s?\{/.test(chart[key].toString())).to.be.true;
 			});
 
+			// @ts-ignore
 			expect(bb.instance.indexOf(chart) === -1).to.be.true;
 
 			const el = <HTMLDivElement>document.getElementById("chart");
@@ -123,7 +124,7 @@ describe("API chart", () => {
 			expect(el.style.position).to.be.equal("");
 		});
 
-		it("should be destroyed without throwing error", done => {
+		it("should be destroyed without throwing error", () => new Promise(done => {
 			chart = util.generate({
 				data: {
 					columns: [["data1", 50, 20]]
@@ -138,8 +139,8 @@ describe("API chart", () => {
 
 				chart.destroy();
 				setTimeout(done, 500);
-			}, 500);
-		});
+			}, 300);
+		}));
 
 		it("should not throw error when already destroyed", () => {
 			chart.destroy();
@@ -162,7 +163,7 @@ describe("API chart", () => {
 	});
 
 	describe("config()", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [

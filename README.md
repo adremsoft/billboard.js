@@ -40,7 +40,7 @@ If you have any questions, checkout the previous posts or create a new one at:
 - [Issue with 'question' label](https://github.com/naver/billboard.js/issues?utf8=%E2%9C%93&q=label%3Aquestion)
 
 ## Supported chart types
-<img src="https://naver.github.io/billboard.js/img/chart-types.png?v=11" width=800>
+<img src="https://naver.github.io/billboard.js/img/chart-types.png?v=15" width=800>
 
 ## Download and Installation
 
@@ -74,8 +74,9 @@ You can download the compressed files for production
   - https://naver.github.io/billboard.js/release/[VERSION]/dist/billboard.min.css
 
 ### Packaged version (with D3.js inclusion)
-> Packaged version is not an official distribution.
-> It's to provide an easy way to load 'billboard.js' with dependency.
+
+> ⚠️ Packaged version is not an official distribution.
+> It's to provide an easy way to load 'billboard.js' with dependencies.
 
  - **Latest**
     - https://naver.github.io/billboard.js/release/latest/dist/billboard.pkgd.js
@@ -87,6 +88,7 @@ You can download the compressed files for production
 </details>
 
 ### Themes
+> [!NOTE]
 > If you want apply themes, simply load one of the theme css file provided instead of the default css file.
 > - [Screenshot Preview](https://github.com/naver/billboard.js/wiki/Themes)
 
@@ -123,6 +125,7 @@ With nightly, you can try upcoming changes prior the official release.
 
 - https://github.com/naver/billboard.js/tree/nightly/dist
 
+> [!NOTE]
 > The version info will be given as the build datetime: `x.x.x-nightly-yyyymmddhhmmss`
 
 There're two ways to install from `nightly` branch directly.
@@ -170,15 +173,12 @@ If you want to use 'billboard.js' without installation, load files directly from
 
 ## Supported Browsers
 
-> - Basically will work on all SVG supported browsers.
+> [!IMPORTANT]
+> - Basically will work on all SVG and ES6+ supported browsers.
 > - <sup>*</sup>Notes for legacy browsers:
 >   - Recommended to use `packaged` build or construct your own build following [`How to bundle for legacy browsers?`](https://github.com/naver/billboard.js/wiki/How-to-bundle-for-legacy-browsers%3F) instruction.
 >   - D3.js dropped the support of legacy browsers since [v6](https://observablehq.com/@d3/d3v6-migration-guide).
 >   - The support isn't fully guaranteed.
-
-|Internet Explorer|Chrome|Firefox|Safari|iOS|Android|
-|---|---|---|---|---|---|
-|9+<sup>*</sup>|Latest|Latest|Latest|8+|4+|
 
 
 ## Dependency by version
@@ -187,6 +187,8 @@ If you want to use 'billboard.js' without installation, load files directly from
  :---: | :---:
  4.x ~ 5.x | 1.x ~ 2.x
  6.x+ | 3.x+
+
+# Getting Started
 
 Load billboard.js after D3.js.
 
@@ -205,6 +207,7 @@ Load billboard.js after D3.js.
 ```
 
 or use importing ESM.
+> [!TIP]
 > 📌 Also check: [How to load as ESM directly from the browser?](https://github.com/naver/billboard.js/wiki/How-to-load-as-ESM-directly-from-the-browser%3F)
 
 ```js
@@ -223,7 +226,7 @@ import "billboard.js/dist/billboard.css";
 import "billboard.js/dist/theme/insight.css"
 ```
 
-> **Note**
+> [!NOTE]
 > - For migration from C3.js, checkout the [migration guide](https://github.com/naver/billboard.js/wiki/How-to-migrate-from-C3.js%3F).
 > - If has an issue bundling for legacy browsers, checkout "[How to bundle for legacy browsers?](https://github.com/naver/billboard.js/wiki/How-to-bundle-for-legacy-browsers%3F)".
 

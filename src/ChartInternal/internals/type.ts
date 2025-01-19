@@ -2,8 +2,9 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {isArray, isNumber, isString} from "../../module/util";
 import {TYPE, TYPE_BY_CATEGORY} from "../../config/const";
+import {isArray, isNumber, isString} from "../../module/util";
+import type {IData} from "../data/IData";
 
 export default {
 	/**
@@ -21,7 +22,7 @@ export default {
 		const {config, state: {withoutFadeIn}} = $$;
 
 		$$.mapToTargetIds(targetIds).forEach(id => {
-			withoutFadeIn[id] = (type === config.data_types[id]);
+			withoutFadeIn[id] = type === config.data_types[id];
 			config.data_types[id] = type;
 		});
 
@@ -119,10 +120,9 @@ export default {
 	 */
 	isTypeOf(d, type): boolean {
 		const id = isString(d) ? d : d.id;
-		const dataType = this.config.data_types[id] || this.config.data_type;
+		const dataType = this.config && (this.config.data_types?.[id] || this.config.data_type);
 
-		return isArray(type) ?
-			type.indexOf(dataType) >= 0 : dataType === type;
+		return isArray(type) ? type.indexOf(dataType) >= 0 : dataType === type;
 	},
 
 	hasPointType(): boolean {
@@ -138,7 +138,7 @@ export default {
 	 * @returns {boolean}
 	 * @private
 	 */
-	hasArcType(targets, exclude): boolean {
+	hasArcType(targets?: IData, exclude?: string[]): boolean {
 		return this.hasTypeOf("Arc", targets, exclude);
 	},
 
@@ -191,6 +191,10 @@ export default {
 
 	isPieType(d): boolean {
 		return this.isTypeOf(d, "pie");
+	},
+
+	isFunnelType(d): boolean {
+		return this.isTypeOf(d, "funnel");
 	},
 
 	isGaugeType(d): boolean {
@@ -251,17 +255,19 @@ export default {
 	 */
 	labelishData(d) {
 		return this.isBarType(d) ||
-			this.isLineType(d) ||
-			this.isScatterType(d) ||
-			this.isBubbleType(d) ||
-			this.isCandlestickType(d) ||
-			this.isRadarType(d) ||
-			this.isTreemapType(d) ? d.values.filter(v => isNumber(v.value) || Boolean(v.value)) : [];
+				this.isLineType(d) ||
+				this.isScatterType(d) ||
+				this.isBubbleType(d) ||
+				this.isCandlestickType(d) ||
+				this.isFunnelType(d) ||
+				this.isRadarType(d) ||
+				this.isTreemapType(d) ?
+			d.values.filter(v => isNumber(v.value) || Boolean(v.value)) :
+			[];
 	},
 
 	barLineBubbleData(d) {
-		return this.isBarType(d) || this.isLineType(d) || this.isBubbleType(d) ?
-			d.values : [];
+		return this.isBarType(d) || this.isLineType(d) || this.isBubbleType(d) ? d.values : [];
 	},
 
 	// https://github.com/d3/d3-shape#curves

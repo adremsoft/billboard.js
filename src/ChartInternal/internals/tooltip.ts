@@ -3,10 +3,24 @@
  * billboard.js project is licensed under the MIT license
  */
 import {select as d3Select} from "d3-selection";
-import {document} from "../../module/browser";
 import {$ARC, $TOOLTIP} from "../../config/classes";
+import {document} from "../../module/browser";
+import {
+	callFn,
+	getPointer,
+	getTransformCTM,
+	hasViewBox,
+	isEmpty,
+	isFunction,
+	isObject,
+	isString,
+	isUndefined,
+	isValue,
+	parseDate,
+	sanitize,
+	tplProcess
+} from "../../module/util";
 import type {IArcData, IDataRow} from "../data/IData";
-import {getPointer, isEmpty, isFunction, isObject, isString, isValue, callFn, sanitize, tplProcess, isUndefined, parseDate} from "../../module/util";
 
 export default {
 	/**
@@ -77,7 +91,8 @@ export default {
 		const {api, config} = $$;
 
 		return isFunction(config.tooltip_contents) ?
-			config.tooltip_contents.bind(api)(...args) : $$.getTooltipContent(...args);
+			config.tooltip_contents.bind(api)(...args) :
+			$$.getTooltipContent(...args);
 	},
 
 	/**
@@ -105,14 +120,19 @@ export default {
 		const nameFormat = (...arg) => sanitize((nameFn || (name => name))(...arg));
 		const valueFormat = (...arg) => {
 			const fn = valueFn || (
-				state.hasTreemap || $$.isStackNormalized() ? (v, ratio) => `${(ratio * 100).toFixed(2)}%` : defaultValueFormat
+				state.hasTreemap || $$.isStackNormalized() ?
+					(v, ratio) => `${(ratio * 100).toFixed(2)}%` :
+					defaultValueFormat
 			);
 
 			return sanitize(fn(...arg));
 		};
 
 		const order = config.tooltip_order;
-		const getRowValue = row => ($$.axis && $$.isBubbleZType(row) ? $$.getBubbleZData(row.value, "z") : $$.getBaseValue(row));
+		const getRowValue =
+			row => ($$.axis && $$.isBubbleZType(row) ?
+				$$.getBubbleZData(row.value, "z") :
+				$$.getBaseValue(row));
 		const getBgColor = $$.levelColor ? row => $$.levelColor(row.value) : row => color(row);
 		const contents = config.tooltip_contents;
 		const tplStr = contents.template;
@@ -168,9 +188,11 @@ export default {
 
 				text = tplProcess(tpl[0], {
 					CLASS_TOOLTIP: $TOOLTIP.tooltip,
-					TITLE: isValue(title) ? (
-						tplStr ? title : `<tr><th colspan="2">${title}</th></tr>`
-					) : ""
+					TITLE: isValue(title) ?
+						(
+							tplStr ? title : `<tr><th colspan="2">${title}</th></tr>`
+						) :
+						""
 				});
 			}
 
@@ -183,20 +205,29 @@ export default {
 			param = [row.ratio, row.id, row.index];
 
 			if ($$.isAreaRangeType(row)) {
-				const [high, low] = ["high", "low"].map(v => valueFormat($$.getRangedData(row, v), ...param));
+				const [high, low] = ["high", "low"].map(v =>
+					valueFormat($$.getRangedData(row, v), ...param)
+				);
 				const mid = valueFormat(getRowValue(row), ...param);
 
 				value = `<b>Mid:</b> ${mid} <b>High:</b> ${high} <b>Low:</b> ${low}`;
 			} else if ($$.isCandlestickType(row)) {
-				const [open, high, low, close, volume] = ["open", "high", "low", "close", "volume"].map(v => {
-					const value = $$.getRangedData(row, v, "candlestick");
+				const [open, high, low, close, volume] = ["open", "high", "low", "close", "volume"]
+					.map(v => {
+						const value = $$.getRangedData(row, v, "candlestick");
 
-					return value ? valueFormat(
-						$$.getRangedData(row, v, "candlestick"), ...param
-					) : undefined;
-				});
+						return value ?
+							valueFormat(
+								$$.getRangedData(row, v, "candlestick"),
+								...param
+							) :
+							undefined;
+					});
 
-				value = `<b>Open:</b> ${open} <b>High:</b> ${high} <b>Low:</b> ${low} <b>Close:</b> ${close}${volume ? ` <b>Volume:</b> ${volume}` : ""}`;
+				value =
+					`<b>Open:</b> ${open} <b>High:</b> ${high} <b>Low:</b> ${low} <b>Close:</b> ${close}${
+						volume ? ` <b>Volume:</b> ${volume}` : ""
+					}`;
 			} else if ($$.isBarRangeType(row)) {
 				const {value: rangeValue, id, index} = row;
 
@@ -211,11 +242,13 @@ export default {
 					continue;
 				}
 
-				const name = nameFormat(row.name, ...param);
+				const name = nameFormat(row.name ?? row.id, ...param);
 				const color = getBgColor(row);
 				const contentValue = {
 					CLASS_TOOLTIP_NAME: $TOOLTIP.tooltipName + $$.getTargetSelectorSuffix(row.id),
-					COLOR: (tplStr || !$$.patterns) ? color : `<svg><rect style="fill:${color}" width="10" height="10"></rect></svg>`,
+					COLOR: (tplStr || !$$.patterns) ?
+						color :
+						`<svg><rect style="fill:${color}" width="10" height="10"></rect></svg>`,
 					NAME: name,
 					VALUE: value
 				};
@@ -245,7 +278,9 @@ export default {
 		return (tplStr || `<table class="{=CLASS_TOOLTIP}"><tbody>
 				{=TITLE}
 				{{<tr class="{=CLASS_TOOLTIP_NAME}">
-					<td class="name">${this.patterns ? `{=COLOR}` : `<span style="background-color:{=COLOR}"></span>`}{=NAME}</td>
+					<td class="name">${
+			this.patterns ? `{=COLOR}` : `<span style="background-color:{=COLOR}"></span>`
+		}{=NAME}</td>
 					<td class="value">{=VALUE}</td>
 				</tr>}}
 			</tbody></table>`)
@@ -261,7 +296,7 @@ export default {
 	 */
 	setTooltipPosition(dataToShow: IDataRow[], eventTarget: SVGElement): void {
 		const $$ = this;
-		const {config, scale, state, $el: {eventRect, tooltip}} = $$;
+		const {config, scale, state, $el: {eventRect, tooltip, svg}} = $$;
 		const {bindto} = config.tooltip_contents;
 		const isRotated = config.axis_rotated;
 		const datum = tooltip?.datum();
@@ -270,15 +305,21 @@ export default {
 			const data = dataToShow ?? JSON.parse(datum.current);
 			const [x, y] = getPointer(state.event, eventTarget ?? eventRect?.node()); // get mouse event position
 			const currPos: {
-				x: number, y: number, xAxis?: number, yAxis?: number | (
+				x: number,
+				y: number,
+				xAxis?: number,
+				yAxis?: number | (
 					(value: number, id?: string, axisId?: string) => number
-				)} = {x, y};
+				)
+			} = {x, y};
 
 			if (state.hasAxis && scale.x && datum && "x" in datum) {
 				const getYPos = (value = 0, id?: string, axisId = "y"): number => {
 					const scaleFn = scale[id ? $$.axis?.getId(id) : axisId];
 
-					return scaleFn ? scaleFn(value) + (isRotated ? state.margin.left : state.margin.top) : 0;
+					return scaleFn ?
+						scaleFn(value) + (isRotated ? state.margin.left : state.margin.top) :
+						0;
 				};
 
 				currPos.xAxis = scale.x(datum.x) + (
@@ -298,8 +339,15 @@ export default {
 			// Get tooltip position
 			const pos = config.tooltip_position?.bind($$.api)(
 				data,
-				width, height, eventRect?.node(), currPos
-			) ?? $$.getTooltipPosition.bind($$)(width, height, currPos);
+				width,
+				height,
+				eventRect?.node(),
+				currPos
+			) ?? (
+				hasViewBox(svg) ?
+					$$.getTooltipPositionViewBox.bind($$)(width, height, currPos) :
+					$$.getTooltipPosition.bind($$)(width, height, currPos)
+			);
 
 			["top", "left"].forEach(v => {
 				const value = pos[v];
@@ -315,6 +363,61 @@ export default {
 	},
 
 	/**
+	 * Get tooltip position when svg has vieBox attribute
+	 * @param {number} tWidth Tooltip width value
+	 * @param {number} tHeight Tooltip height value
+	 * @param {object} currPos Current event position value from SVG coordinate
+	 * @returns {object} top, left value
+	 */
+	getTooltipPositionViewBox(tWidth: number, tHeight: number,
+		currPos: {[key: string]: number}): {top: number, left: number} {
+		const $$ = this;
+		const {$el: {eventRect, svg}, config, state} = $$;
+
+		const isRotated = config.axis_rotated;
+		const hasArcType = $$.hasArcType() || state.hasFunnel || state.hasTreemap;
+		const target = (hasArcType ? svg : eventRect)?.node() ?? state.event.target;
+
+		let {x, y} = currPos;
+
+		if (state.hasAxis) {
+			x = isRotated ? x : currPos.xAxis;
+			y = isRotated ? currPos.xAxis : y;
+		}
+
+		// currPos value based on SVG coordinate
+		const ctm = getTransformCTM(target, x, y, false);
+		const rect = target.getBoundingClientRect();
+		const size = getTransformCTM(target, 20, 0, false).x;
+
+		let top = ctm.y;
+		let left = ctm.x + (tWidth / 2) + size;
+
+		if (hasArcType) {
+			if (state.hasFunnel || state.hasTreemap || state.hasRadar) {
+				left -= (tWidth / 2) + size;
+				top += tHeight;
+			} else {
+				top += rect.height / 2;
+				left += (rect.width / 2) - (tWidth - size);
+			}
+		}
+
+		if (left + tWidth > rect.width) {
+			left = rect.width - tWidth - size;
+		}
+
+		if (top + tHeight > rect.height) {
+			top -= tHeight * 2;
+		}
+
+		return {
+			top,
+			left
+		};
+	},
+
+	/**
 	 * Returns the position of the tooltip
 	 * @param {string} tWidth Width value of tooltip element
 	 * @param {string} tHeight Height value of tooltip element
@@ -322,29 +425,41 @@ export default {
 	 * @returns {object} top, left value
 	 * @private
 	 */
-	getTooltipPosition(tWidth: number, tHeight: number, currPos: {[key:string]: number}):
-		{top: number, left: number} {
+	getTooltipPosition(tWidth: number, tHeight: number,
+		currPos: {[key: string]: number}): {top: number, left: number} {
 		const $$ = this;
 		const {config, scale, state} = $$;
-		const {width, height, current, isLegendRight, inputType} = state;
+		const {width, height, current, hasFunnel, hasRadar, hasTreemap, isLegendRight, inputType} =
+			state;
 		const hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle;
-		const hasTreemap = state.hasTreemap;
 		const isRotated = config.axis_rotated;
 		const hasArcType = $$.hasArcType();
 		const svgLeft = $$.getSvgLeft(true);
 		let chartRight = svgLeft + current.width - $$.getCurrentPaddingByDirection("right");
+
 		const size = 20;
 		let {x, y} = currPos;
 
 		// Determine tooltip position
-		if (hasArcType) {
-			const raw = inputType === "touch" || $$.hasType("radar");
+		if (hasRadar) {
+			x += x >= (width / 2) ? 15 : -(tWidth + 15);
+			y += 15;
+		} else if (hasArcType) {
+			const notTouch = inputType !== "touch";
 
-			if (!raw) {
+			if (notTouch) {
+				let titlePadding = $$.getTitlePadding?.() ?? 0;
+
+				if (titlePadding && hasGauge && config.arc_rangeText_values?.length) {
+					titlePadding += 10;
+				}
+
 				x += (width - (isLegendRight ? $$.getLegendWidth() : 0)) / 2;
-				y += hasGauge ? height : height / 2;
+				y += (hasGauge ? height : (height / 2) + tHeight) + titlePadding;
 			}
-		} else if (!hasTreemap) {
+		} else if (hasFunnel || hasTreemap) {
+			y += tHeight;
+		} else {
 			const padding = {
 				top: $$.getCurrentPaddingByDirection("top", true),
 				left: $$.getCurrentPaddingByDirection("left", true)
@@ -362,13 +477,13 @@ export default {
 
 		// when tooltip left + tWidth > chart's width
 		if ((x + tWidth + 15) > chartRight) {
-			x -= tWidth + (hasTreemap || hasArcType ? 0 : (isRotated ? size * 2 : 38));
+			x -= tWidth + (hasFunnel || hasTreemap || hasArcType ? 0 : (isRotated ? size * 2 : 38));
 		}
 
 		if (y + tHeight > current.height) {
-			const gap = hasTreemap ? 0 : 30;
+			const gap = hasTreemap ? tHeight + 10 : 30;
 
-			y -= hasGauge ? tHeight * 3 : tHeight + gap;
+			y -= hasGauge ? tHeight * 1.5 : tHeight + gap;
 		}
 
 		const pos = {top: y, left: x};
@@ -465,7 +580,9 @@ export default {
 		const $$ = this;
 		const {api, config, $el: {tooltip}} = $$;
 
-		if (tooltip && tooltip.style("display") !== "none" && (!config.tooltip_doNotHide || force)) {
+		if (
+			tooltip && tooltip.style("display") !== "none" && (!config.tooltip_doNotHide || force)
+		) {
 			const selectedData = JSON.parse(tooltip.datum().current ?? {});
 
 			callFn(config.tooltip_onhide, api, selectedData);
@@ -511,7 +628,7 @@ export default {
 							c.tooltip[
 								show && isNotSameIndex ? "show" : "hide"
 							]({index});
-						} catch (e) {}
+						} catch {}
 					}
 				});
 		}
@@ -550,18 +667,18 @@ export default {
 						$$.setExpand(idx, null, true);
 					}
 				}
-
-			// for Arc & Treemap
-			} else {
+			} else { // for Arc & Treemap
 				const {clientX, clientY} = event;
 
 				setTimeout(() => {
-					let target = document.elementFromPoint(clientX, clientY);
-					const data = d3Select(target).datum() as IArcData;
+					let target = [clientX, clientY].every(Number.isFinite) &&
+						document.elementFromPoint(clientX, clientY);
+					const data = target && d3Select(target).datum() as IArcData;
 
 					if (data) {
 						const d = $$.hasArcType() ?
-							$$.convertToArcData($$.updateAngle(data)) : data?.data;
+							$$.convertToArcData($$.updateAngle(data)) :
+							data?.data;
 
 						hasTreemap && (target = svg.node());
 						d && $$.showTooltip([d], target);

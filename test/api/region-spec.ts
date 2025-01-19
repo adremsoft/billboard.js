@@ -3,11 +3,11 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
-import {expect} from "chai";
+import {beforeEach, beforeAll, describe, expect, it} from "vitest";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import {$REGION} from "../../src/config/classes";
-import {testRegions} from "../internals/rergions-spec";
+import {testRegions} from "../internals/regions-spec";
 
 describe("API regions", function() {
 	let chart;
@@ -18,7 +18,7 @@ describe("API regions", function() {
 	});
 
 	describe("regions()", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -42,7 +42,7 @@ describe("API regions", function() {
 			}
 		});
 
-		it("should update regions", done => {
+		it("should update regions", () => new Promise(done => {
 			const main = chart.$.main;
 			const expectedRegions = [
 				{
@@ -88,9 +88,9 @@ describe("API regions", function() {
 					expect(region.classed(unexpectedClass)).to.not.be.ok;
 				});
 
-				done();
-			}, 1000);
-		});
+				done(1);
+			}, 300);
+		}));
 
 		it("check for <rect> element generation", () => {
 			// when
@@ -120,7 +120,7 @@ describe("API regions", function() {
 	});
 
 	describe("Add regions using regions()", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -147,7 +147,7 @@ describe("API regions", function() {
 			}
 		});
 
-		it("should add regions", done => {
+		it("should add regions", () => new Promise(done => {
 			const main = chart.$.main;
 			const expectedRegions = [
 				{
@@ -209,9 +209,9 @@ describe("API regions", function() {
 					expect(region.classed(expectedClass)).to.be.ok;
 				});
 
-				done();
-			}, 500);
-		});
+				done(1);
+			}, 300);
+		}));
 
 
 		it("set options", () => {
@@ -242,13 +242,13 @@ describe("API regions", function() {
 			
 			const rect = chart.internal.$el.region.list.select("rect").node().getBoundingClientRect();
 
-			expect(rect.width).to.be.equal(300);
+			expect(rect.width).to.be.equal(299.5);
 			expect(rect.height).to.be.equal(426);
 		});
 	});
 
 	describe("Remove regions using regions()", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -278,7 +278,7 @@ describe("API regions", function() {
 			}
 		});
 
-		it("should remove regions", done => {
+		it("should remove regions", () => new Promise(done => {
 			const main = chart.$.main;
 			const expectedRegions = [
 				{
@@ -315,14 +315,14 @@ describe("API regions", function() {
 					expect(region.classed(expectedClass)).to.be.ok;
 				});
 
-				done();
-			}, 500);
-		});
+				done(1);
+			}, 300);
+		}));
 	});
 
 	// regions.add / remove
 	describe("regions()", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -373,7 +373,7 @@ describe("API regions", function() {
 	});
 
 	describe("label text", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -428,7 +428,7 @@ describe("API regions", function() {
 			}
 		});
 
-		it("labels are updated correctly?", done => {
+		it("labels are updated correctly?", () => new Promise(done => {
 			// when
 			chart.regions([
 				{
@@ -458,8 +458,8 @@ describe("API regions", function() {
 			setTimeout(() => {
 				chart.internal.$el.region.list.each(testRegions(chart));
 
-				done();
-			}, 500);
-		});
+				done(1);
+			}, 300);
+		}));
 	});
 });

@@ -2,7 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import type {RegionsType} from "../../../../types/types";
+import type {RegionOptions} from "../../../../types/options";
 
 /**
  * main config options
@@ -34,7 +34,7 @@ export default {
 	 *    classname: "bill-board"  // ex) <div id='chart' class='bill-board'>
 	 * }
 	 */
-	bindto: <string|{element: string; classname?: string}> "#chart",
+	bindto: <string | {element: string, classname?: string}>"#chart",
 
 	/**
 	 * Set chart background.
@@ -55,7 +55,7 @@ export default {
 	 *    imgUrl: "https://naver.github.io/billboard.js/img/logo/billboard.js.svg",
 	 * }
 	 */
-	background: <{class?: string; color?: string; imgUrl?: string;}> {},
+	background: <{class?: string, color?: string, imgUrl?: string}>{},
 
 	/**
 	 * Set 'clip-path' attribute for chart element
@@ -85,7 +85,7 @@ export default {
 	 *   classname: "test_class"
 	 * }
 	 */
-	svg_classname: <string|undefined> undefined,
+	svg_classname: <string | undefined>undefined,
 
 	/**
 	 * The desired size of the chart element.
@@ -103,8 +103,8 @@ export default {
 	 *   height: 480
 	 * }
 	 */
-	size_width: <number|undefined> undefined,
-	size_height: <number|undefined> undefined,
+	size_width: <number | undefined>undefined,
+	size_height: <number | undefined>undefined,
 
 	/**
 	 * The padding of the chart element.
@@ -150,11 +150,11 @@ export default {
 	 * }
 	 */
 	padding: true,
-	padding_mode: <"fit"|undefined> undefined,
-	padding_left: <number|undefined> undefined,
-	padding_right: <number|undefined> undefined,
-	padding_top: <number|undefined> undefined,
-	padding_bottom: <number|undefined> undefined,
+	padding_mode: <"fit" | undefined>undefined,
+	padding_left: <number | undefined>undefined,
+	padding_right: <number | undefined>undefined,
+	padding_top: <number | undefined>undefined,
+	padding_bottom: <number | undefined>undefined,
 
 	/**
 	 * Set chart resize options
@@ -162,28 +162,36 @@ export default {
 	 * @memberof Options
 	 * @type {object}
 	 * @property {object} [resize] resize object
-	 * @property {boolean} [resize.auto=true] Set chart resize automatically on viewport changes.
+	 * @property {boolean|string} [resize.auto=true] Set chart resize automatically on viewport changes.
+	 * - **NOTE:** Available options
+	 *   - true: Enables automatic resize.
+	 *   - false: Disables automatic resize.
+	 *   - "viewBox": Enables automatic resize, and size will be fixed based on the viewbox.
 	 * @property {boolean|number} [resize.timer=true] Set resize timer option.
-	 * - **NOTE:**
+	 * - **NOTE:** Available options
 	 *   - The resize function will be called using:
 	 *     - true: `setTimeout()`
 	 *     - false: `requestIdleCallback()`
-	 *   - Given number(delay in ms) value, resize function will be triggered using `setTimer()` with given delay.
+	 *   - Given number(delay in ms) value, resize function will be triggered using `setTimeout()` with given delay.
+	 * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.resizeViewBox)
 	 * @example
 	 *  resize: {
 	 *      auto: false,
 	 *
-	 *      // set resize function will be triggered using `setTimer()`
+	 *      // set resize based on viewBox value
+	 *      auto: "viewBox",
+	 *
+	 *      // set resize function will be triggered using `setTimeout()`
 	 *      timer: true,
 	 *
 	 *      // set resize function will be triggered using `requestIdleCallback()`
 	 *      timer: false,
 	 *
-	 *      // set resize function will be triggered using `setTimer()` with a delay of `100ms`.
+	 *      // set resize function will be triggered using `setTimeout()` with a delay of `100ms`.
 	 *      timer: 100
 	 *  }
 	 */
-	resize_auto: true,
+	resize_auto: <boolean | "viewBox">true,
 	resize_timer: true,
 
 	/**
@@ -199,7 +207,7 @@ export default {
 	 *   ...
 	 * }
 	 */
-	onclick: <(() => void)|undefined> undefined,
+	onclick: <(() => void) | undefined>undefined,
 
 	/**
 	 * Set a callback to execute when mouse/touch enters the chart.
@@ -214,7 +222,7 @@ export default {
 	 *   ...
 	 * }
 	 */
-	onover: <(() => void)|undefined> undefined,
+	onover: <(() => void) | undefined>undefined,
 
 	/**
 	 * Set a callback to execute when mouse/touch leaves the chart.
@@ -229,7 +237,7 @@ export default {
 	 *   ...
 	 * }
 	 */
-	onout: <(() => void)|undefined> undefined,
+	onout: <(() => void) | undefined>undefined,
 
 	/**
 	 * Set a callback to execute when user resizes the screen.
@@ -243,7 +251,7 @@ export default {
 	 *   ...
 	 * }
 	 */
-	onresize: <(() => void)|undefined> undefined,
+	onresize: <(() => void) | undefined>undefined,
 
 	/**
 	 * Set a callback to execute when screen resize finished.
@@ -257,7 +265,7 @@ export default {
 	 *   ...
 	 * }
 	 */
-	onresized: <(() => void)|undefined> undefined,
+	onresized: <(() => void) | undefined>undefined,
 
 	/**
 	 * Set a callback to execute before the chart is initialized
@@ -271,7 +279,7 @@ export default {
 	 *   ...
 	 * }
 	 */
-	onbeforeinit: <(() => void)|undefined> undefined,
+	onbeforeinit: <(() => void) | undefined>undefined,
 
 	/**
 	 * Set a callback to execute when the chart is initialized.
@@ -285,7 +293,7 @@ export default {
 	 *   ...
 	 * }
 	 */
-	oninit: <(() => void)|undefined> undefined,
+	oninit: <(() => void) | undefined>undefined,
 
 	/**
 	 * Set a callback to execute after the chart is initialized
@@ -299,7 +307,7 @@ export default {
 	 *   ...
 	 * }
 	 */
-	onafterinit: <(() => void)|undefined> undefined,
+	onafterinit: <(() => void) | undefined>undefined,
 
 	/**
 	 * Set a callback which is executed when the chart is rendered. Basically, this callback will be called in each time when the chart is redrawed.
@@ -313,7 +321,7 @@ export default {
 	 *   ...
 	 * }
 	 */
-	onrendered: <(() => void)|undefined> undefined,
+	onrendered: <(() => void) | undefined>undefined,
 
 	/**
 	 * Set duration of transition (in milliseconds) for chart animation.<br><br>
@@ -350,7 +358,10 @@ export default {
 	 * @memberof Options
 	 * @type {object}
 	 * @property {object} [render] render object
-	 * @property {boolean} [render.lazy=true] Make to not render at initialization (enabled by default when bind element's visibility is hidden).
+	 * @property {boolean} [render.lazy=true] Make to not render at initialization.
+	 * - **NOTE**:
+	 *   - Enabled by default when bind element's visibility is hidden.
+	 *   - When set to `false`, will initialize the chart regardless the bind element's visibility state, but in this case chart can't be guaranteed to be rendered properly.
 	 * @property {boolean} [render.observe=true] Observe bind element's visibility(`display` or `visiblity` inline css property or class value) & render when is visible automatically (for IEs, only works IE11+). When set to **false**, call [`.flush()`](./Chart.html#flush) to render.
 	 * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.LazyRender)
 	 * @example
@@ -360,7 +371,7 @@ export default {
 	 * }
 	 *
 	 * @example
-	 *	// <!-- render.lazy will detect visibility defined -->
+	 * 	// <!-- render.lazy will detect visibility defined -->
 	 *  // (a) <div id='chart' class='hide'></div>
 	 *  // (b) <div id='chart' style='display:none'></div>
 	 *
@@ -373,7 +384,7 @@ export default {
 	 *  document.getElementById('chart').style.display = 'block';  // (b)
 	 *
 	 * @example
-	 *	// chart won't be rendered and not observing bind element's visiblity changes
+	 * 	// chart won't be rendered and not observing bind element's visiblity changes
 	 *  var chart = bb.generate({
 	 *     render: {
 	 *          lazy: true,
@@ -384,21 +395,35 @@ export default {
 	 *  // call at any point when you want to render
 	 *  chart.flush();
 	 */
-	render: <{lazy?: boolean; observe?: boolean;}> {},
+	render: <{lazy?: boolean, observe?: boolean}>{},
 
 	/**
 	 * Show rectangles inside the chart.<br><br>
-	 * This option accepts array including object that has axis, start, end and class.
-	 * The keys start, end and class are optional.
-	 * axis must be x, y or y2. start and end should be the value where regions start and end.
-	 * If not specified, the edge values will be used.
-	 * If timeseries x axis, date string, Date object and unixtime integer can be used.
-	 * If class is set, the region element will have it as class.
+	 * - **NOTE:**<br>
+	 *   - axis must be x, y or y2. start and end should be the value where regions start and end.
+	 *   - If not specified, the edge values will be used.
+	 *   - If timeseries x axis, date string, Date object and unixtime integer can be used.
+	 *   - If category x axis, category name can be used for start and end.
+	 *   - If class is set, the region element will have it as class.
+	 *
+	 * This option accept array of object with below values:
+	 * - `axis {string}`: 'x', 'y', or 'y2'
+	 * - `[start] {number|Date|string}`: Start position of the region. If not set, the start will be the edge of the chart.
+	 * - `[end] {number|Date|string}`: End position of the region. If not set, the end will be the edge of the chart.
+	 * - `[class] {string}`: Class value to apply to the region.
+	 * - `[label] {object}` Lable text option.
+	 *   - `text {string}`: Text value.
+	 *   - `x {number}`: x Position.
+	 *   - `y {number}`: y Position.
+	 *   - `color {string}`: Color string.
+	 *   - `rotated (boolean)`: Whether rotate label or not.
 	 * @name regions
 	 * @memberof Options
 	 * @type {Array}
 	 * @default []
-	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Region.RegionLabel)
+	 * @see [Demo: Regions](https://naver.github.io/billboard.js/demo/#Region.Region)
+	 * @see [Demo: Regions Timeseries](https://naver.github.io/billboard.js/demo/#Region.RegionWithTimeseries)
+	 * @see [Demo: Regions Label](https://naver.github.io/billboard.js/demo/#Region.RegionLabel)
 	 * @example
 	 *  regions: [
 	 *    {
@@ -416,5 +441,5 @@ export default {
 	 *    }
 	 *  ]
 	 */
-	regions: <RegionsType[]> []
+	regions: <RegionOptions[]>[]
 };

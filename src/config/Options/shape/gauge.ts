@@ -15,16 +15,21 @@ export default {
 	 * @property {boolean} [gauge.background=""] Set background color. (The `.bb-chart-arcs-background` element)
 	 * @property {boolean} [gauge.fullCircle=false] Show full circle as donut. When set to 'true', the max label will not be showed due to start and end points are same location.
 	 * @property {boolean} [gauge.label.show=true] Show or hide label on gauge.
+	 * @property {Function} [gauge.label.extents] Set customized min/max label text.
 	 * @property {Function} [gauge.label.format] Set formatter for the label on gauge. Label text can be multilined with `\n` character.<br>
 	 * Will pass following arguments to the given function:
 	 * - value {number}: absolute value
 	 * - ratio {number}: value's ratio
 	 * - id {string}: data's id value
-	 * @property {Function} [gauge.label.extents] Set customized min/max label text.
+	 * @property {number|Function} [gauge.label.ratio=undefined] Set ratio of labels position.
 	 * @property {number} [gauge.label.threshold=0] Set threshold ratio to show/hide labels.
 	 * @property {boolean} [gauge.expand=true] Enable or disable expanding gauge.
 	 * @property {number} [gauge.expand.rate=0.98] Set expand rate.
 	 * @property {number} [gauge.expand.duration=50] Set the expand transition time in milliseconds.
+	 * @property {boolean} [gauge.enforceMinMax=false] Enforce to given min/max value.
+	 * - **Note:** Only works for single data series.
+	 * 	- When `gauge.min=50` and given value is `30`, gauge will render as empty value.
+	 * 	- When `gauge.max=100` and given value is `120`, gauge will render till 100, not surpassing max value.
 	 * @property {number} [gauge.min=0] Set min value of the gauge.
 	 * @property {number} [gauge.max=100] Set max value of the gauge.
 	 * @property {number} [gauge.startingAngle=-1 * Math.PI / 2] Set starting angle where data draws.
@@ -55,8 +60,10 @@ export default {
 	 * - single
 	 * - multi
 	 * @property {number} [gauge.arcs.minWidth=5] Set minimal width of gauge arcs until the innerRadius disappears.
+	 * @see [Demo: enforceMinMax, min/max](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeMinMax)
 	 * @see [Demo: archLength](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeArcLength)
 	 * @see [Demo: startingAngle](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeStartingAngle)
+	 * @see [Demo: labelRatio](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeLabelRatio)
 	 * @example
 	 *  gauge: {
 	 *      background: "#eee", // will set 'fill' css prop for '.bb-chart-arcs-background' classed element.
@@ -77,6 +84,14 @@ export default {
 	 *          // 0.1(10%) ratio value means, the minimum ratio to show text label relative to the total value.
 	 *          // if data value is below than 0.1, text label will be hidden.
 	 *          threshold: 0.1,
+	 *
+	 *          // set ratio callback. Should return ratio value
+	 *          ratio: function(d, radius, h) {
+	 *              ...
+	 *              return ratio;
+	 *          },
+	 *          // or set ratio number
+	 *          ratio: 0.5
 	 *      },
 	 *
 	 *      // disable expand transition for interaction
@@ -89,6 +104,11 @@ export default {
 	 *      	// set expand area rate
 	 *          rate: 1
 	 *      },
+	 *
+	 *      // enforce min/max value.
+	 * 		// when given value < min, will render as empty value.
+	 * 		// when value > max, will render to given max value not surpassing it.
+	 *      enforceMinMax: true,
 	 *
 	 *      min: -100,
 	 *      max: 200,
@@ -110,19 +130,21 @@ export default {
 	gauge_background: "",
 	gauge_fullCircle: false,
 	gauge_label_show: true,
-	gauge_label_format: <(() => string)|undefined> undefined,
-	gauge_label_extents: <(() => string)|undefined> undefined,
+	gauge_label_extents: <(() => string) | undefined>undefined,
+	gauge_label_format: <(() => string) | undefined>undefined,
+	gauge_label_ratio: <(() => number) | undefined>undefined,
 	gauge_label_threshold: 0,
+	gauge_enforceMinMax: false,
 	gauge_min: 0,
 	gauge_max: 100,
 	gauge_type: "single",
 	gauge_startingAngle: -1 * Math.PI / 2,
 	gauge_arcLength: 100,
 	gauge_title: "",
-	gauge_units: <string|undefined> undefined,
-	gauge_width: <number|undefined> undefined,
+	gauge_units: <string | undefined>undefined,
+	gauge_width: <number | undefined>undefined,
 	gauge_arcs_minWidth: 5,
-	gauge_expand: <boolean|{duration: number}> {},
+	gauge_expand: <boolean | {duration: number}>{},
 	gauge_expand_rate: 0.98,
 	gauge_expand_duration: 50
 };

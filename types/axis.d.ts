@@ -6,9 +6,23 @@ import {Chart} from "./chart";
  */
 export interface Axis {
 	/**
+	 * Setup the way to evaluate tick text size.
+	 * - **NOTE:**
+	 *   - Setting `false` or custom evaluator, highly recommended to memoize evaluated text dimension value to not degrade performance.
+	 */
+	evalTextSize?: boolean | ((text: SVGTextElement) => {w: number, h: number});
+
+	/**
 	 * Switch x and y axis position.
 	 */
 	rotated?: boolean;
+
+	/**
+	 * Set axis tooltip.
+	 */
+	tooltip?: boolean | {
+		backgroundColor?: string | {x?: string; y?: string; y2?: string}
+	};
 	x?: xAxisConfiguration;
 	y?: yAxisConfiguration;
 	y2?: yAxisConfigurationBase;
@@ -42,6 +56,16 @@ export interface xAxisConfiguration extends AxisConfigurationBase {
 	 *   - x axis min value should be >= 0.
 	 */
 	type?: "category" | "indexed" | "log" | "timeseries";
+
+	/**
+	 * Force the x axis to interact as single rather than multiple x axes.
+	 * - NOTE: The tooltip event will be triggered nearing each data points(for multiple xs) rather than x axis based(as single x does) in below condition:
+	 *   - for `bubble` & `scatter` type
+	 *   - when `data.xs` is set
+	 *   - when `tooltip.grouped=false` is set
+	 *     - `tooltip.grouped` options will take precedence over `axis.forceSingleX` option.
+	 */
+	forceAsSingle?: boolean;
 
 	/**
 	 * Set how to treat the timezone of x values.
@@ -97,8 +121,8 @@ export interface xAxisConfiguration extends AxisConfigurationBase {
 	height?: number;
 
 	/**
-	 * Set default extent for subchart and zoom.
-	 * This can be an array or function that returns an array.
+	 * Set extent for subchart and zoom(drag only). This can be an array or function that returns an array.
+	 * - **NOTE:** Specifying value, will limit the zoom scope selection within.
 	 */
 	extent?: Array<number|string> | (
 		(
@@ -309,6 +333,14 @@ export interface XTickConfiguration {
 		 * Show or hide tick text
 		 */
 		show?: boolean;
+
+		/**
+		 * Set the first/last axis tick text to be positioned inside the chart on non-rotated axis.
+		 */
+		inner?: boolean | {
+			first? : boolean;
+			last?: boolean;
+		};
 	};
 
 	/**

@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
-import {expect} from "chai";
+import {beforeEach, beforeAll, describe, expect, it} from "vitest";
 import util from "../assets/util";
 
 describe("API export", () => {
@@ -26,17 +26,17 @@ describe("API export", () => {
 	});
 
 	describe("Basic export functionalities", () => {
-		it("should invoke a callback when ready", done => {
+		it("should invoke a callback when ready", () => new Promise(done => {
 			function exportCallback(dataUrl) {
 				expect(dataUrl).to.not.be.equal("");
-				done();
+				done(1);
 			}
 
 			expect(/^data:image\/svg\+xml;base64,.+/.test(chart.export())).to.be.true;
 			chart.export(null, exportCallback);
-		});
+		}));
 
-		it("should export chart as image/png", done => {
+		it("should export chart as image/png", () => new Promise(done => {
 			function exportCallback(dataUrl) {
 				const link: any = document.createElement("link");
 
@@ -44,13 +44,13 @@ describe("API export", () => {
 				link.href = dataUrl;
 				expect(link.getAttribute("href").length).to.be.not.equal(0);
 
-				done();
+				done(1);
 			}
 
 			chart.export({mimeType: "image/png"}, exportCallback);
-		});
+		}));
 
-		it("should export in different size", done => {
+		it("should export in different size", () => new Promise(done => {
 			const expectedDataURL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA+gAAAJYCAYAAA";
 
 			setTimeout(() => {
@@ -59,12 +59,12 @@ describe("API export", () => {
 				}, data => {
 					expect(data.indexOf(expectedDataURL) >= 0).to.be.true;
 					
-					done();
+					done(1);
 				});
-			}, 500);
-		});
+			}, 300);
+		}));
 
-		it("should export in different aspectRatio", done => {
+		it("should export in different aspectRatio", () => new Promise(done => {
 			const expectedDataURL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAAEsCAYAAACG+vy+AAA";
 
 			setTimeout(() => {
@@ -73,10 +73,10 @@ describe("API export", () => {
 				}, data => {
 					expect(data.indexOf(expectedDataURL) > -1).to.be.true;
 
-					done();
+					done(1);
 				});
-			}, 500);
-		});
+			}, 300);
+		}));
 
 		it("set options", () => {
 			args = {
@@ -118,16 +118,16 @@ describe("API export", () => {
 			};
 		});
 
-		it("should export custom points properly", done => {
+		it("should export custom points properly", () => new Promise(done => {
 			const expectedDataURL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACMAAAAjCAYAAAAe2bNZAAA";
 
 			setTimeout(() => {
 				chart.export(null, data => {
 					expect(data.indexOf(expectedDataURL) > -1).to.be.true;
-					done();
+					done(1);
 				});
-			}, 500);
-		});
+			}, 300);
+		}));
 	
 		it("should export valid svg even with weird css", () => {
 			document.body.innerHTML += `<style>@font-face{src:url("#&<>'\0");}</style>`;
@@ -145,7 +145,7 @@ describe("API export", () => {
 	});
 
 	describe("Additional functionalities", () => {
-		before(() => { 
+		beforeAll(() => { 
 			args = {
 				svg: {
 					classname: "export-preserve-font-style"
@@ -192,7 +192,7 @@ describe("API export", () => {
 		});
 
 		const expected = [
-			// pattern for local
+			// pattern for local: preserveFontStyle=false
 			[
 				"C4chWSMAlAu00wVlR2E7+uDROYmcLJ7zYhZwOr4MA7",
 				"uVxYOhqMiQRIoMkEKACbDLjW5ttSANpvP4",
@@ -201,27 +201,41 @@ describe("API export", () => {
 
 			// pattern for local: preserveFontStyle=true
 			[
-				"RIYJUAB6NhIiLgAtL/ub4XqgdKfecox9OPcoQB0OTv0bSIB7e3qA0Y2gY",
-				"AgBISAEhIAQKGoCJp0CLmrQKTTueAADAfQE8BWAp93Lr/UvPgn5IaAPIOm3z",
-				"KxX72Ifp34GYBSAiQB6A9ArZNWuoLwQwFr3EfDLeRCA2wB4CMCu7srkyBgBqFcq"
+				"UwUQECoIlWYZu6qgABsKvys3LDFCAAGmYQNocKRKQAATAiIVlMehQgAKbHluxJ",
+				"bAOgeAH1QlUcTZOjJOFPV7zN3zDlq/tQUvMb1kYAjNcQLZROAGxBtNTf0oIXkACY",
+				"CZAACZAACZAABSCfARIgARIgARIgARLIMQIUgDkWcHaXBEiABEiABEiABCgA"
+			],
+			
+			// pattern for webdriverio
+			[
+				"nSetJ0vvOG1XcoZ8BQEeD3w9CCB6BGIkmCiAIze",
+				"5Ku10DhdnT36vaRow3ZSgXoFLMsSYJMwL9XnRanBgYGBojufZVlvBCChjpwQMZJcsj",
+				"ANwDC7nf6iqhRcXno2cQP2wnXM4qpFnSLACzpHlfYysmAV1jezaWxGgmFrai6bp9Y6Ryp2AaM"
 			],
 
-			// pattern for CI
+			// pattern for playwright
 			[
-				"daDPbWsKoO5XK5nbkCmMKBwZBTRYACMFXp",
-				"hnPiDAjDxKWaA0xDQof4fQ4NroPhVUwKwio0wx1wmw",
-				"wSmZI62cSue7pG2e4HFtdu18VLgwMyjYGeG3aP"
+				"31YqlQ4kAUzcNOyQCCSKAAlgonCzs7QgQAKYFktRzrAIDA8PnyciH2vz3va",
+				"VSxTBFAVCvG9EcqwrJwaBEx59kIYM9JQYJFFMGbYFyyozdCPQ4p7",
+				"2vI8zkABqEdwKQD1iANHAPWIAwWgHnHgCGDV4qCTYBoXGfC6I05zJgMYW4lmeko"
+			],
+
+			// pattern for CI: preserveFontStyle=false
+			[
+				"CZJgASaSGA5AGcAWG3wNiJg5ybawqZJgARsIEABaAPUclXqU3rWhk",
+				"k76U3gZTLl3oYCNrBM1drxPe9Mxm87lWuAzt4mGiaxwj87rttu",
+				"0mABEiABEiABEggNQIUgKnx49skQAIkQAIkQAIkYDkCFICWcxkNJgESI"
 			],
 
 			// pattern for CI: preserveFontStyle=true
 			[
-				"4U0OAAjDiVKvfuQsCnLC2WblfcoXb1MeG0MxJUOwFwMDoI1ghV8nCgt0UG83WRxx",
-				"AKOiTTutIKA9XRdAgo0QBNe1wn41m04KQJg3wOB86SvuWs1/1pMACaxNoF4Bu",
-				"H8wWyLdFr4gZWYBnbtoAO2SzOhhNr41l9l0NbArPEZDAiSQQAJmLWYTg"
+				"MMcesnMiKAsgzhwTak0AtArgzgC+WwHEfALtR6FRltwPYGMDxAHYHYAA8B",
+				"2HTkHLCWAg4nrEehzQNDS997GQgCNORiBbCPDmWN4MpEACVRGoFYBrKz35t",
+				"gFcBOMOf8rUAftrP9AcCOMkvvxfA8hxSvQJglx51zgZwRQUAMMg5PQTg21nm"
 			]
 		];
 
-		it("check when 'preserveFontStyle=false'", done => {
+		it("check when 'preserveFontStyle=false'", () => new Promise(done => {
 			chart.export({
 				preserveFontStyle: false
 			}, function(dataUrl) {
@@ -229,11 +243,11 @@ describe("API export", () => {
 					expected.some(pttr => pttr.every(v => dataUrl.indexOf(v) == -1))
 				).to.be.true;
 
-				done();
+				done(1);
 			});
-		});
+		}));
 
-		it("check when 'preserveFontStyle=true'", done => {
+		it("check when 'preserveFontStyle=true'", () => new Promise(done => {
 			const font = new FontFace("Alfa Slab One", "url(https://fonts.gstatic.com/s/alfaslabone/v17/6NUQ8FmMKwSEKjnm5-4v-4Jh2dJhe_escmA.woff2)", {
 				style: "normal",
 				weight: "400"
@@ -261,9 +275,9 @@ describe("API export", () => {
 						.style("margin-left", null)
 						.style("padding-top", null);
 
-					done();
+					done(1);
 				});
 			});
-		});
+		}));
 	});
 });

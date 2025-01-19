@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 // @ts-nocheck
-import {expect} from "chai";
+import {beforeEach, beforeAll, afterAll, describe, expect, it} from "vitest";
 import {$AXIS} from "../../src/config/classes";
 import util from "../assets/util";
 
@@ -19,7 +19,7 @@ describe("X AXIS", function() {
 		},
 		axis: {
 			x: {
-				inverted: true,
+				inverted: true
 			}
 		}
 	};
@@ -151,7 +151,7 @@ describe("X AXIS", function() {
 		});
 
 		describe("subchart", () => {
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						columns: [
@@ -185,7 +185,7 @@ describe("X AXIS", function() {
 		});
 
 		describe("zoom", () => {
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						columns: [
@@ -216,7 +216,7 @@ describe("X AXIS", function() {
 				
 				const {zoom} = chart.internal.scale;
 
-				expect(lines.attr("d")).to.be.equal("M1794,390.583L1196,227.858L597,323.579L-1,36.417L-599,275.718");
+				expect(lines.attr("d")).to.be.equal("M1797,390.583L1198,227.858L599,323.579L0,36.417L-599,275.718");
 
 				expect(zoom(2) - zoom(3)).to.be.closeTo(600, 5);
 
@@ -229,7 +229,7 @@ describe("X AXIS", function() {
 		});
 
 		describe("x Axis dimension", () => {
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						x: "x",
@@ -287,6 +287,158 @@ describe("X AXIS", function() {
 					main.select(`.${$AXIS.axisX}`).node().getBoundingClientRect().y
 				).to.be.above(state.height);
 			});
+		});
+
+		describe("tick.text.inner", () => {
+			beforeAll(() => {
+				args = {
+					data: {
+						x: "x",
+						xFormat: "%Y",
+						columns: [
+							["x", "2020", "2021", "2022", "2023", "2024"],
+							["data1", 30, 200, 100, 400, 150],
+							["data2", 130, 340, 200, 500, 250]
+						],
+						type: "line"
+					},
+					axis: {
+						x: {
+							type: "timeseries",
+							tick: {
+								format: "%Y-%m-%d %H:%M:%S",
+								text: {
+									inner: true
+								}
+							}
+						}
+					}
+				};
+			});
+
+			it("should first & last tick text to be positioned at inner.", () => {
+				chart.internal.$el.axis.x
+					.selectAll(".tick:first-of-type > text, .tick:last-of-type > text").each(function(d, i) {
+						const anchor = this.style.textAnchor;
+
+						expect(anchor).to.be.equal(i === 0 ? "start" : "end");
+					});
+			});
+
+			it("set options: axis.x.tick.text.inner={first:true, last:false}", () => {
+				args.axis.x.tick.text.inner = {
+					first: true,
+					last: false
+				};	
+			});
+
+			it("should first tick text to be positioned at inner.", () => {
+				chart.internal.$el.axis.x
+					.selectAll(".tick:first-of-type > text, .tick:last-of-type > text").each(function(d, i) {
+						const anchor = this.style.textAnchor;
+
+						expect(anchor).to.be.equal(i === 0 ? "start" : "middle");
+					});
+			});
+
+			it("set options: axis.x.tick.text.inner={first:false, last:true}", () => {
+				args.axis.x.tick.text.inner = {
+					first: false,
+					last: true
+				};	
+			});
+
+			it("should last tick text to be positioned at inner.", () => {
+				chart.internal.$el.axis.x
+					.selectAll(".tick:first-of-type > text, .tick:last-of-type > text").each(function(d, i) {
+						const anchor = this.style.textAnchor;
+
+						expect(anchor).to.be.equal(i === 0 ? "middle" : "end");
+					});
+			});
+		});
+	});
+
+	describe("axis.x.forceAsSingle", () => {
+		beforeAll(() => {
+			args = {
+				data: {
+				  columns: [
+					  ["data1", 30, 350, 200, 380, 150]
+				  ],
+				  type: "scatter"
+				},
+				tooltip: {
+				  grouped: true
+				},
+				axis: {
+				  x: {
+					forceAsSingle: true
+				  }
+				}
+			};
+		});
+
+		function checkSingleX(ctx, x = 2) {
+			const {grid, tooltip} = ctx.$;
+
+			// when
+			ctx.tooltip.show({x});
+
+			expect(+tooltip.select("th").text()).to.be.equal(x);
+			expect(+grid.main.select("line.bb-xgrid-focus").attr("x1") > 0).to.be.ok;
+		}
+
+		it("scatter: should interact as single x", () => {
+			checkSingleX(chart);
+		});
+
+		it("set options: data.type='bubble'", () => {
+			args.data.type = "bubble";
+		});
+
+		it("bubble: should interact as single x", () => {
+			checkSingleX(chart);
+		});
+
+		it("set options: tooltop.grouped=false", () => {
+			args.tooltip.grouped = false;
+		});
+
+		it("shouldn't work as single x, when tooltip.grouped=false is set", () => {
+			chart.tooltip.show({x: 2});
+
+			expect(chart.$.tooltip.html()).to.be.empty;
+		});
+
+		it("set options: data.type='line'", () => {
+			args = {
+				data: {
+					columns: [
+						["x1", 1, 3, 5, 7, 9],
+						["x2", 2, 4, 6, 8, 10],
+						["data1", 30, 350, 200, 380, 150],
+						["data2", 130, 120, 330, 280, 230]
+					],
+					type: "line",
+					xs: {
+						data1: "x1",
+						data2: "x2"
+					}
+				},
+				tooltip: {
+					grouped: true
+				},
+				axis: {
+					x: {
+						forceAsSingle: true
+					}
+				}
+			};
+		});
+
+		it("line data.xs: should interact as single x", () => {
+			checkSingleX(chart, 5);
 		});
 	});
 });

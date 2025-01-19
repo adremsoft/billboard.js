@@ -4,8 +4,8 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
+import {beforeEach, beforeAll, afterAll, describe, expect, it} from "vitest";
 import sinon from "sinon";
-import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import {$FOCUS, $LEGEND} from "../../src/config/classes";
@@ -15,14 +15,14 @@ describe("LEGEND", () => {
 	let chart;
 	let args;
 
-	after(() => util.destroyAll());
+	afterAll(() => util.destroyAll());
 
 	beforeEach(() => {
 		chart = util.generate(args);
 	});
 
 	describe("legend when multiple charts rendered", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -50,7 +50,7 @@ describe("LEGEND", () => {
 	});
 
 	describe("legend position", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -82,7 +82,7 @@ describe("LEGEND", () => {
 	});
 
 	describe("legend as inset", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -171,7 +171,7 @@ describe("LEGEND", () => {
 	});
 
 	describe("should update args to have only one series", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -196,7 +196,7 @@ describe("LEGEND", () => {
 	});
 
 	describe("legend.hide", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -239,7 +239,7 @@ describe("LEGEND", () => {
 	});
 
 	describe("legend.show", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -269,7 +269,7 @@ describe("LEGEND", () => {
 	});
 
 	describe("custom legend settings", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -321,9 +321,8 @@ describe("LEGEND", () => {
 	describe("set legend using template", () => {
 		const itemClass = "abcd";
 
-		before(() => {
-			// @ts-ignore
-			sandbox("legend-wrapper").innerHTML = "<ul id='legend'></ul>";
+		beforeAll(() => {
+			util.sandbox("legend-wrapper").innerHTML = "<ul id='legend'></ul>";
 
 			args = {
 				data: {
@@ -367,7 +366,7 @@ describe("LEGEND", () => {
 			expect(items.size()).to.be.equal(2);
 		});
 
-		it("custom legend should behaves as normal legend", done => {
+		it("custom legend should behaves as normal legend", () => new Promise(done => {
 			const selector = `.${$LEGEND.legendItem}-data1`;
 			const legend = chart.$.legend.select(selector).node();
 			const rect = legend.getBoundingClientRect();
@@ -386,27 +385,28 @@ describe("LEGEND", () => {
 
 			setTimeout(() => {
 				expect(chart.$.legend.select(selector).classed($LEGEND.legendItemHidden)).to.be.true;
-				done();
+				done(1);
 			}, 300);
-		});
+		}));
 
-		it("check for template update on dynamic loading", d => {
+		it("check for template update on dynamic loading", () => new Promise(done => {
 			setTimeout(function() {
 				chart.load({
 					columns: [
 						["data3", 200, 100, 300, 130, 20]
 					],
 					unload: true,
-					done: () => {
+					done() {
 						const legend = d3Select("#legend");
 
 						expect(legend.selectAll("li").size()).to.be.equal(1);
 						expect(legend.text()).to.be.equal("data3");
-						d();
+						
+						done(1);
 					}
 				});
-			}, 500);
-		});
+			}, 300);
+		}));
 
 		it("set options legend.content.template as function", () => {
 			args.legend.contents.template = function(title, color, data) {
@@ -489,7 +489,7 @@ describe("LEGEND", () => {
 	});
 
 	describe("when using custom points", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 				  columns: [
@@ -531,10 +531,27 @@ describe("LEGEND", () => {
 
 			expect(nodes.size()).to.be.equal(chart.data().length);
 		});
+
+		it("should defs element added removed on unload?", () => new Promise(done => {
+			const {$el: {defs}} = chart.internal;
+			const selector = "[id$=data-3]";
+			const hasDefPoint = !defs.select(selector).empty();
+
+			// when
+			chart.unload({
+				ids: ["data_3"],
+				done() {
+					expect(hasDefPoint).to.be.true;
+					expect(defs.select(selector).empty()).to.be.true;
+
+					done(1);
+				}
+			});
+		}));
 	});
 
 	describe("legend item tile coloring with color_treshold", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -571,8 +588,11 @@ describe("LEGEND", () => {
 			expect(tileColor[3]).to.be.equal('rgb(255, 0, 0)');
 		});
 
-		it("color.threshold should be generated without error when legend.show=false", done => {
-			const spy = sinon.spy();
+		it("color.threshold should be generated without error when legend.show=false", () => new Promise(done => {
+			const spy = sinon.spy(() => {
+				expect(spy.called).to.be.true;
+				done(1);
+			});
 
 			util.generate({
 				data: {
@@ -590,16 +610,11 @@ describe("LEGEND", () => {
 				},
 				onrendered: spy
 			});
-
-			setTimeout(() => {
-				expect(spy.called).to.be.true;
-				done();
-			}, 500);
-		});
+		}));
 	});
 
 	describe("legend item tile coloring without color_treshold", () => {
-		before(function() {
+		beforeAll(function() {
 			args = {
 				data: {
 					columns: [
@@ -641,7 +656,7 @@ describe("LEGEND", () => {
 	});
 
 	describe("legend opacity onclick", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -671,7 +686,7 @@ describe("LEGEND", () => {
 	});
 
 	describe("legend transition", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -687,7 +702,7 @@ describe("LEGEND", () => {
 			};
 		});
 
-		it("legend shouldn't be transitioned", done => {
+		it("legend shouldn't be transitioned", () => new Promise(done => {
 			chart.load({
 				columns: [
 					["data1", 130, 120, 150, 140, 160, 150],
@@ -703,17 +718,17 @@ describe("LEGEND", () => {
 					clearInterval(interval);
 					expect(pos.every(v => v === pos[0])).to.be.true;
 
-					done();
+					done(1);
 				}
 
 				pos.push(chart.$.legend.select("text").attr("x"));
 				cnt++;
 			}, 50);
-		});
+		}));
 	});
 
 	describe("item.tile.type option", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -771,7 +786,7 @@ describe("LEGEND", () => {
 	});
 
 	describe("legend item interaction", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -800,7 +815,7 @@ describe("LEGEND", () => {
 		});
 
 		it("set options: legend.item.onclick", () => {
-			args.legend.item.onclick = () => {};
+			args.legend.item.onclick = sinon.spy(() => {});
 		});
 
 		it("should only 'click' event lister bound", () => {
@@ -811,14 +826,24 @@ describe("LEGEND", () => {
 
 				expect(item.on("mouseover mouseout")).to.be.undefined;
 				expect(item.on("click")).to.not.be.undefined;
-
 				expect(item.style("cursor")).to.be.equal("pointer");
+
+				id === "data1" && chart.hide(id);
+
+				fireEvent(item.node(), "click", {
+					clientX: 2,
+					clientY: 2
+				}, chart);
 			});
+
+			// given visible state argguments?
+			expect(args.legend.item.onclick.args)
+				.to.be.deep.equal(chart.data().map(({id}) => [id, id === "data1" ? false : true]));
 		});
 
 		it("set options: legend.item.onover", () => {
 			delete args.legend.item.onclick;
-			args.legend.item.onover = () => {};
+			args.legend.item.onover = sinon.spy(() => {});
 		});
 
 		it("should only 'mouseover' event lister bound", () => {
@@ -829,14 +854,24 @@ describe("LEGEND", () => {
 
 				expect(item.on("click mouseout")).to.be.undefined;
 				expect(item.on("mouseover")).to.not.be.undefined;
-
 				expect(item.style("cursor")).to.be.equal("pointer");
+
+				id === "data2" && chart.hide(id);
+
+				fireEvent(item.node(), "mouseover", {
+					clientX: 2,
+					clientY: 2
+				}, chart);
 			});
+
+			// given visible state argguments?
+			expect(args.legend.item.onover.args)
+				.to.be.deep.equal(chart.data().map(({id}) => [id, id === "data2" ? false : true]));
 		});
 
 		it("set options: legend.item.onout", () => {
 			delete args.legend.item.onover;
-			args.legend.item.onout = () => {};
+			args.legend.item.onout = sinon.spy(() => {});
 		});
 
 		it("should only 'mouseout' event lister bound", () => {
@@ -847,9 +882,19 @@ describe("LEGEND", () => {
 
 				expect(item.on("click mouseover")).to.be.undefined;
 				expect(item.on("mouseout")).to.not.be.undefined;
-
 				expect(item.style("cursor")).to.be.equal("pointer");
+
+				id === "data1" && chart.hide(id);
+
+				fireEvent(item.node(), "mouseout", {
+					clientX: 2,
+					clientY: 2
+				}, chart);
 			});
+
+			// given visible state argguments?
+			expect(args.legend.item.onout.args)
+				.to.be.deep.equal(chart.data().map(({id}) => [id, id === "data1" ? false : true]));
 		});
 
 		it("set options: legend.item.interaction.dblclik=true", () => {
@@ -878,7 +923,7 @@ describe("LEGEND", () => {
 	});
 
 	describe("legend format", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -921,6 +966,46 @@ describe("LEGEND", () => {
 			const legendTitle = chart.$.legend.selectAll("title").nodes().map(v => v.textContent);
 
 			expect(dataIds).to.be.deep.equal(legendTitle);
+		});
+
+		it("set options: data.names", () => {
+			args = {
+				data: {
+					names: {
+					  "data1": "Detailed Name",
+					  "data2": "Name Detailed"
+					},
+					columns: [
+					  ["data1", 71.4],
+					  ["data2", 10],
+					],
+					type: "gauge"
+				},
+				legend: {
+					format: id => id.substr(0, 2) + "...",
+					tooltip: true
+				}
+			}
+		});
+
+		it("should legend title show data.names values.", () => {
+			const legendTitle = chart.$.legend.selectAll("title").nodes().map(v => v.textContent);
+			const dataNames = Object.values(chart.data.names());
+
+			expect(legendTitle).to.be.deep.equal(dataNames);
+		});
+
+		it("set options: legend.format", () => {
+			args.legend.format = function(id, dataId) {
+				return id === "Name Detailed" ? dataId : id;
+			};
+		});
+
+		it("should legend format function receive original data id.", () => {
+			const legend = chart.$.legend.select("g:last-child");
+
+			expect(legend.select("text").text()).to.be.equal("data2");
+			expect(legend.select("title").text()).to.be.equal("Name Detailed");
 		});
 	});
 });

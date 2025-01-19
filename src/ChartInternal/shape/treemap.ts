@@ -7,16 +7,16 @@ import {
 	treemap as d3Treemap,
 	treemapBinary as d3TreemapBinary,
 	treemapDice as d3TreemapDice,
+	treemapResquarify as d3TreemapResquarify,
 	treemapSlice as d3TreemapSlice,
 	treemapSliceDice as d3TreemapSliceDice,
-	treemapSquarify as d3TreemapSquarify,
-	treemapResquarify as d3TreemapResquarify
+	treemapSquarify as d3TreemapSquarify
 } from "d3-hierarchy";
 import {select as d3Select} from "d3-selection";
 import type {d3Selection} from "../../../types/types";
 import {$COMMON, $TREEMAP} from "../../config/classes";
-import {isFunction, getRandom} from "../../module/util";
-import type {ITreemapData, IData, IDataRow} from "../data/IData";
+import {getRandom, isFunction} from "../../module/util";
+import type {IData, IDataRow, ITreemapData} from "../data/IData";
 
 /**
  * Get treemap elements' position
@@ -34,11 +34,11 @@ function position(group, root): void {
 		))
 		.select("rect")
 		.attr("width", d => (
-			d === root ? width : x(d.x1) - x(d.x0))
-		)
+			d === root ? width : x(d.x1) - x(d.x0)
+		))
 		.attr("height", d => (
-			d === root ? 0 : y(d.y1) - y(d.y0))
-		);
+			d === root ? 0 : y(d.y1) - y(d.y0)
+		));
 }
 
 /**
@@ -63,26 +63,40 @@ function convertDataToTreemapData(data: IData[]): ITreemapData[] {
 	});
 }
 
+/**
+ * Get hierarchy data
+ * @param {object} data Data object
+ * @returns {Array} Array of hierarchy data
+ * @private
+ */
+function getHierachyData(data) {
+	const $$ = this;
+	const hierarchyData = d3Hierarchy(data).sum(d => d.value);
+	const sortFn = $$.getSortCompareFn(true);
+
+	return [
+		$$.treemap(
+			sortFn ? hierarchyData.sort(sortFn) : hierarchyData
+		)
+	];
+}
+
 export default {
 	initTreemap(): void {
 		const $$ = this;
-		const {$el, state: {
-			current: {width, height}, clip, datetimeId
-		}} = $$;
+		const {
+			$el,
+			state: {
+				current: {width, height},
+				clip,
+				datetimeId
+			}
+		} = $$;
 
 		clip.id = `${datetimeId}-clip`;
 
 		$$.treemap = d3Treemap()
 			.tile($$.getTreemapTile());
-
-		$$.treemapFn = data => {
-			const hierarchyData = d3Hierarchy(data).sum(d => d.value);
-			const sortFn = $$.getSortCompareFn(true);
-
-			return $$.treemap(
-				sortFn ? hierarchyData.sort(sortFn) : hierarchyData
-			);
-		};
 
 		$el.defs
 			.append("clipPath")
@@ -133,8 +147,10 @@ export default {
 				.on(isTouch ? "touchend" : "mouseout", event => {
 					const data = getTarget(event);
 
-					$$.hideTooltip();
-					$$.setOverOut(false, data);
+					if (config.interaction_onout) {
+						$$.hideTooltip();
+						$$.setOverOut(false, data);
+					}
 				});
 		}
 	},
@@ -148,12 +164,12 @@ export default {
 		const $$ = this;
 		const {config, state: {current: {width, height}}} = $$;
 		const tile = {
-			"binary": d3TreemapBinary,
-			"dice": d3TreemapDice,
-			"slice": d3TreemapSlice,
-			"sliceDice": d3TreemapSliceDice,
-			"squarify": d3TreemapSquarify,
-			"resquarify": d3TreemapResquarify
+			binary: d3TreemapBinary,
+			dice: d3TreemapDice,
+			slice: d3TreemapSlice,
+			sliceDice: d3TreemapSliceDice,
+			squarify: d3TreemapSquarify,
+			resquarify: d3TreemapResquarify
 		}[config.treemap_tile ?? "binary"] ?? d3TreemapBinary;
 
 		return (node, x0, y0, x1, y1) => {
@@ -193,7 +209,7 @@ export default {
 	updateTargetsForTreemap(targets: IData): void {
 		const $$ = this;
 		const {$el: {treemap}} = $$;
-		const treemapData = $$.treemapFn($$.getTreemapData(targets ?? $$.data.targets));
+		const treemapData = getHierachyData.call($$, $$.getTreemapData(targets ?? $$.data.targets));
 
 		// using $el.treemap reference can alter data, so select treemap <g> again
 		treemap.data(treemapData);
@@ -209,6 +225,7 @@ export default {
 		const {$el, $T} = $$;
 		const data = $el.treemap.datum();
 		const classChartTreemap = $$.getChartClass("Treemap");
+		const classTreemap = $$.getClass("treemap", true);
 
 		const treemap = $el.treemap
 			.selectAll("g")
@@ -225,6 +242,7 @@ export default {
 		$el.treemap.selectAll("g")
 			.attr("class", classChartTreemap)
 			.select("rect")
+			.attr("class", classTreemap)
 			.attr("fill", d => $$.color(d.data.name));
 	},
 
@@ -283,13 +301,17 @@ export default {
 		const ratio = $$.getRatio("treemap", d);
 		const percentValue = (ratio * 100).toFixed(2);
 		const meetLabelThreshold = config.treemap_label_show && $$.meetsLabelThreshold(
-			ratio, "treemap"
-		) ? null : "0";
+				ratio,
+				"treemap"
+			) ?
+			null :
+			"0";
 
 		return function(node) {
 			node.style("opacity", meetLabelThreshold);
 
-			return isFunction(format) ? format.bind($$.api)(value, ratio, id) :
+			return isFunction(format) ?
+				format.bind($$.api)(value, ratio, id) :
 				`${id}\n${percentValue}%`;
 		};
 	}

@@ -3,8 +3,8 @@
  * billboard.js project is licensed under the MIT license
  */
 import {zoomIdentity as d3ZoomIdentity, zoomTransform as d3ZoomTransform} from "d3-zoom";
-import {extend, getMinMax, isDefined, isObject, parseDate} from "../../module/util";
 import type {TDomainRange} from "../../ChartInternal/data/IData";
+import {extend, getMinMax, isDefined, isObject, parseDate} from "../../module/util";
 
 /**
  * Zoom by giving x domain range.
@@ -35,8 +35,7 @@ import type {TDomainRange} from "../../ChartInternal/data/IData";
 // NOTE: declared funciton assigning to variable to prevent duplicated method generation in JSDoc.
 const zoom = function<T = TDomainRange>(domainValue?: T): T | undefined {
 	const $$ = this.internal;
-	const {$el, axis, config, org, scale, state} = $$;
-	const isRotated = config.axis_rotated;
+	const {axis, config, org, scale, state} = $$;
 	const isCategorized = axis.isCategorized();
 	let domain;
 
@@ -57,9 +56,7 @@ const zoom = function<T = TDomainRange>(domainValue?: T): T | undefined {
 			if (isWithinRange) {
 				state.domain = domain;
 
-				if (isCategorized) {
-					domain = domain.map((v, i) => Number(v) + (i === 0 ? 0 : 1));
-				}
+				domain = $$.getZoomDomainValue(domain);
 
 				// hide any possible tooltip show before the zoom
 				$$.api.tooltip.hide();
@@ -73,19 +70,7 @@ const zoom = function<T = TDomainRange>(domainValue?: T): T | undefined {
 					// in case of 'config.zoom_rescale=true', use org.xScale
 					const x = isCategorized ? scale.x.orgScale() : (org.xScale || scale.x);
 
-					// Get transform from given domain value
-					// https://github.com/d3/d3-zoom/issues/57#issuecomment-246434951
-					const translate = [-x(domain[0]), 0];
-					const transform = d3ZoomIdentity
-						.scale(x.range()[1] / (
-							x(domain[1]) - x(domain[0])
-						))
-						.translate(
-							...(isRotated ? translate.reverse() : translate) as [number, number]
-						);
-
-					$el.eventRect
-						.call($$.zoom.transform, transform);
+					$$.updateCurrentZoomTransform(x, domain);
 				}
 
 				$$.setZoomResetButton();
@@ -198,7 +183,7 @@ extend(zoom, {
 	 *      max: 100
 	 *  });
 	 */
-	range(range): {min: (number|undefined)[], max: (number|undefined)[]} {
+	range(range): {min: (number | undefined)[], max: (number | undefined)[]} {
 		const zoom = this.zoom;
 
 		if (isObject(range)) {
@@ -229,9 +214,9 @@ export default {
 	 */
 	unzoom(): void {
 		const $$ = this.internal;
-		const {config, $el: {eventRect, zoomResetBtn}, state} = $$;
+		const {config, $el: {eventRect, zoomResetBtn}, scale: {zoom}, state} = $$;
 
-		if ($$.scale.zoom) {
+		if (zoom) {
 			config.subchart_show ?
 				$$.brush.getSelection().call($$.brush.move, null) :
 				$$.zoom.updateTransformScale(d3ZoomIdentity);

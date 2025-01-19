@@ -18,7 +18,7 @@ export default {
 	 */
 	getClass(type: string, withShape: boolean): Function {
 		const isPlural = /s$/.test(type);
-		const useIdKey = /^(area|arc|line|treemap)s?$/.test(type);
+		const useIdKey = /^(area|arc|line|funnel|treemap)s?$/.test(type);
 		const key = isPlural ? "id" : "index";
 
 		return (d): string => {
@@ -87,21 +87,24 @@ export default {
 	getTargetSelectorSuffix(targetId?: string | number): string {
 		const targetStr = targetId || targetId === 0 ? `-${targetId}` : "";
 
-		return targetStr.replace(/([\s?!@#$%^&*()_=+,.<>'":;\[\]\/|~`{}\\])/g, "-");
+		// replace control ascii(0 ~ 32) and extended ascii(127 ~ 160)
+		return targetStr
+			.replace(/[\x00-\x20\x7F-\xA0\s?!@#$%^&*()_=+,.<>'":;\[\]\/|~`{}\\]/g, "-"); // eslint-disable-line no-control-regex
 	},
 
 	selectorTarget(id: string, prefix = "", postfix = ""): string {
 		const target = this.getTargetSelectorSuffix(id);
 
 		// select target & circle
-		return `${prefix}.${CLASS.target + target} ${postfix}, ${prefix}.${CLASS.circles + target} ${postfix}`;
+		return `${prefix}.${CLASS.target + target} ${postfix}, ${prefix}.${
+			CLASS.circles + target
+		} ${postfix}`;
 	},
 
 	selectorTargets(idsValue, prefix: string): string[] | null {
 		const ids = idsValue || [];
 
-		return ids.length ?
-			ids.map(id => this.selectorTarget(id, prefix)) : null;
+		return ids.length ? ids.map(id => this.selectorTarget(id, prefix)) : null;
 	},
 
 	selectorLegend(id: string): string {
@@ -109,7 +112,6 @@ export default {
 	},
 
 	selectorLegends(ids): string[] | null {
-		return ids?.length ?
-			ids.map(id => this.selectorLegend(id)) : null;
+		return ids?.length ? ids.map(id => this.selectorLegend(id)) : null;
 	}
 };

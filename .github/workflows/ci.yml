@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [16.x, 17.x, 18.x]
+        node-version: [18.x, 19.x, 20.x]
 
     steps:
     - uses: actions/checkout@v3
@@ -25,12 +25,13 @@ jobs:
       run: |
         npm config set package-lock false
         npm install --save --legacy-peer-deps
+        npx playwright install
 
     - name: Lint
       run: npm run lint
 
     - name: Run Test
-      run: npm run coverage
+      run: npm run coverage:ci
 
     - name: Coveralls Parallel
       uses: coverallsapp/github-action@master
@@ -66,7 +67,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20
           cache: 'npm'
 
       - name: Install dependencies

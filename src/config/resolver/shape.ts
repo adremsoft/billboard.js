@@ -4,26 +4,24 @@
  */
 import Chart from "../../Chart/Chart";
 import ChartInternal from "../../ChartInternal/ChartInternal";
-import Options from "../Options/Options";
-import {TYPE} from "../const";
 import {extend} from "../../module/util";
+import {TYPE} from "../const";
+import Options from "../Options/Options";
 
 // Axis
-import {
-	api as axisAPI,
-	internal as axisInternal,
-	options as axisOptions
-} from "./axis";
+import {api as axisAPI, internal as axisInternal, options as axisOptions} from "./axis";
 
 // Shape
 import shapeArc from "../../ChartInternal/shape/arc";
 import shapeArea from "../../ChartInternal/shape/area";
 import shapeBar from "../../ChartInternal/shape/bar";
-import shapeCandlestick from "../../ChartInternal/shape/candlestick";
-import shapeGauge from "../../ChartInternal/shape/gauge";
 import shapeBubble from "../../ChartInternal/shape/bubble";
+import shapeCandlestick from "../../ChartInternal/shape/candlestick";
+import shapeFunnel from "../../ChartInternal/shape/funnel";
+import shapeGauge from "../../ChartInternal/shape/gauge";
 import shapeLine from "../../ChartInternal/shape/line";
 import shapePoint from "../../ChartInternal/shape/point";
+import shapePointCommon from "../../ChartInternal/shape/point.common";
 import shapePolar from "../../ChartInternal/shape/polar";
 import shapeRadar from "../../ChartInternal/shape/radar";
 import shapeTreemap from "../../ChartInternal/shape/treemap";
@@ -41,6 +39,7 @@ import optSpline from "../Options/shape/spline";
 // Non-Axis based
 import optArc from "../Options/shape/arc";
 import optDonut from "../Options/shape/donut";
+import optFunnel from "../Options/shape/funnel";
 import optGauge from "../Options/shape/gauge";
 import optPie from "../Options/shape/pie";
 import optPolar from "../Options/shape/polar";
@@ -53,10 +52,12 @@ export {
 	areaSpline,
 	areaSplineRange,
 	areaStep,
+	areaStepRange,
 	bar,
 	bubble,
 	candlestick,
 	donut,
+	funnel,
 	gauge,
 	line,
 	pie,
@@ -75,9 +76,9 @@ export {
  * @private
  */
 function extendAxis(module, option?): void {
-	extend(ChartInternal.prototype, axisInternal.concat(module));
+	extend(ChartInternal.prototype, Object.values(axisInternal).concat(module));
 	extend(Chart.prototype, axisAPI);
-	Options.setOptions(axisOptions.concat(option || []));
+	Options.setOptions(Object.values(axisOptions).concat(option || []));
 }
 
 /**
@@ -87,7 +88,7 @@ function extendAxis(module, option?): void {
  * @private
  */
 function extendLine(module?, option?): void {
-	extendAxis([shapePoint, shapeLine].concat(module || []));
+	extendAxis([shapePointCommon, shapePoint, shapeLine].concat(module || []));
 	Options.setOptions([optPoint, optLine].concat(option || []));
 }
 
@@ -98,8 +99,8 @@ function extendLine(module?, option?): void {
  * @private
  */
 function extendArc(module?, option?): void {
-	extend(ChartInternal.prototype, [shapeArc].concat(module || []));
-	Options.setOptions(option);
+	extend(ChartInternal.prototype, [shapeArc, shapePointCommon].concat(module || []));
+	Options.setOptions([optPoint].concat(option || []));
 }
 
 // Area types
@@ -108,6 +109,9 @@ let area = (): string => (
 );
 let areaLineRange = (): string => (
 	extendLine(shapeArea, [optArea]), (areaLineRange = () => TYPE.AREA_LINE_RANGE)()
+);
+let areaStepRange = (): string => (
+	extendLine(shapeArea, [optArea]), (areaStepRange = () => TYPE.AREA_STEP_RANGE)()
 );
 let areaSpline = () => (
 	extendLine(shapeArea, [optArea, optSpline]), (areaSpline = () => TYPE.AREA_SPLINE)()
@@ -138,22 +142,39 @@ let polar = (): string => (
 	extendArc([shapePolar], [optArc, optPolar]), (polar = () => TYPE.POLAR)()
 );
 let radar = (): string => (
-	extendArc([shapePoint, shapeRadar], [optPoint, optRadar]), (radar = () => TYPE.RADAR)()
+	extendArc(
+		[axisInternal.eventrect, shapePoint, shapeRadar],
+		[optPoint, optRadar, {axis_x_categories: axisOptions.optAxis.axis_x_categories}]
+	), (radar = () => TYPE.RADAR)()
 );
 
 // Axis based types
-let bar = (): string => (extendAxis([shapeBar], optBar), (bar = () => TYPE.BAR)());
+let bar = (): string => (
+	extendAxis([shapeBar, shapePointCommon], [optBar, optPoint]), (bar = () => TYPE.BAR)()
+);
 let bubble = (): string => (
-	extendAxis([shapePoint, shapeBubble], [optBubble, optPoint]), (bubble = () => TYPE.BUBBLE)()
+	extendAxis(
+		[shapePointCommon, shapePoint, shapeBubble],
+		[optBubble, optPoint]
+	), (bubble = () => TYPE.BUBBLE)()
 );
 let candlestick = (): string => (
-	extendAxis([shapeCandlestick], [optCandlestick]), (candlestick = () => TYPE.CANDLESTICK)()
+	extendAxis(
+		[shapeCandlestick, shapePointCommon],
+		[optCandlestick, optPoint]
+	), (candlestick = () => TYPE.CANDLESTICK)()
 );
 let scatter = (): string => (
-	extendAxis([shapePoint], [optPoint, optScatter]), (scatter = () => TYPE.SCATTER)()
+	extendAxis(
+		[shapePointCommon, shapePoint],
+		[optPoint, optScatter]
+	), (scatter = () => TYPE.SCATTER)()
 );
 
 // Non Axis based types
+let funnel = (): string => (
+	extendArc([shapeFunnel], [optFunnel]), (funnel = () => TYPE.FUNNEL)()
+);
 let treemap = (): string => (
 	extendAxis([shapeTreemap], [optTreemap]), (treemap = () => TYPE.TREEMAP)()
 );

@@ -5,6 +5,7 @@ const Types = {
         "area-spline",
         "area-spline-range",
         "area-step",
+        "area-step-range",
         "bar",
         "grouped-bar",
         "bubble",
@@ -16,6 +17,7 @@ const Types = {
         "treemap",
         "polar",
         "radar",
+        "funnel",
         "gauge",
         "gauge-multi",
         "gauge-stack-data",
@@ -27,9 +29,11 @@ const Types = {
         "pie-corner-radius",
         "gauge-needle",
         "donut-needle",
+        "range-text-donut",
+        "range-text-gauge",
         "normalized",
         "combination",
-        "multi-axes",
+        "multi-axes"
     ],
     getRandom(min = 100, max = 1000) {
         return Math.random() * (max - min) + min;
@@ -70,6 +74,9 @@ const Types = {
     },
     getOptions: function() {
         return {
+            size: {
+                height: 150
+            },
             data: {
                 columns: []
             },
@@ -88,10 +95,10 @@ const Types = {
                 show: false
             },
             padding: {
-                top: 30,
+                mode: "fit",
+                left: 10,
                 right: 10,
-                bottom: 5,
-                left: 10
+                top: 35
             },
             point: {
                 r: 3.5
@@ -99,10 +106,21 @@ const Types = {
             bubble: {
                 maxR: 15
             },
+            funnel: {
+                neck: {
+                    width: {
+                        ratio: 0.3
+                    },
+                    height: {
+                        ratio: 0.35
+                    }
+                }
+            },
             gauge: {
                 title: "100%",
                 label: {
-                    extents: v => Math.round(v)
+                    extents: v => Math.round(v),
+                    ratio: 1
                 }
             },
             donut: {
@@ -113,7 +131,9 @@ const Types = {
             pie: {
                 innerRadius: {},
                 outerRadius: {},
-                label: {}
+                label: {
+                    ratio: 1
+                }
             },
             polar: {
                 label: {
@@ -172,6 +192,19 @@ const Types = {
             } else if (type === "grouped-bar") {
                 type = "bar";
                 options.data.groups = [["data0", "data1"]];
+
+            } else if (type === "funnel") {
+                options.data.columns = [
+                    ["data0", 100],
+                    ["data1", 50],
+                    ["data2", 30]
+                ];
+
+                options.padding = {
+                    top: 30,
+                    left: 10,
+                    right: 10
+                };
 
             } else if (type === "gauge") {
                 options.data.columns = [["data0", 70]];
@@ -328,7 +361,44 @@ const Types = {
                         }
                     }
                 };
-                
+
+            } else if (type === "range-text-donut") {
+                type = "donut";
+
+                options.data.columns = [
+                    ["data1", 30],
+                    ["data2", 20],
+                    ["data3", 50]
+                ];
+
+                options.arc = {
+                    rangeText: {
+                        values: [25, 50, 75, 100],
+                        unit: "%"
+                    }
+                };
+
+            } else if (type === "range-text-gauge") {
+                type = "gauge";
+
+                options.data.columns = [
+                    ["data1", 30],
+                    ["data2", 20],
+                    ["data3", 50]
+                ];
+
+                options.arc = {
+                    rangeText: {
+                        values: [5, 10, 30, 50, 70, 83, 100],
+                    }
+                };
+                options.gauge = {
+                    label: {
+                        format: () => "",
+                        extents: () => ""
+                    }
+                };
+
             } else if (type === "combination") {
                 options.data.types = {
                     data0: "bar",
@@ -403,6 +473,10 @@ const Types = {
                     .classed("title", true)
                     .text(v);
             }
+
+        // if (type === "gauge") {
+        //     debugger;
+        // }
 
             bb.generate(options);
         });

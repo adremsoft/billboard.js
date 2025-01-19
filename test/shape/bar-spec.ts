@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {expect} from "chai";
+import {beforeEach, beforeAll, describe, expect, it} from "vitest";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import {$AXIS, $BAR, $COMMON, $EVENT, $LINE, $SHAPE} from "../../src/config/classes";
@@ -19,7 +19,7 @@ describe("SHAPE BAR", () => {
 
 	describe("with groups", () => {
 		describe("with indexed data", () => {
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						columns: [
@@ -49,7 +49,7 @@ describe("SHAPE BAR", () => {
 		describe("with timeseries data", () => {
 			let barWidth = 0;
 
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						x: "date",
@@ -102,7 +102,7 @@ describe("SHAPE BAR", () => {
 		});
 
 		describe("with category data", () => {
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						x: "date",
@@ -137,7 +137,7 @@ describe("SHAPE BAR", () => {
 		});
 
 		describe("Stacking order", () => {
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						json: [
@@ -210,36 +210,37 @@ describe("SHAPE BAR", () => {
 				let i = 0;
 
 				bars.each(function() {
+					//console.log(this.getAttribute("d"))
 					expect(this.getAttribute("d").indexOf(expected[i++]) > -1).to.be.true;
 				});
 			}
 
 			it("should be stacked correctly: data.order=null", () => {
 				const expected = [
-					"M110,446V430.54636550534036",
-					"M110,430.54636550534036V415.09284444699557",
-					"M110,415.09284444699557V411.9639464549821",
-					"M110,411.9639464549821V401.9866088715797",
-					"M110,401.9866088715797V378.7295439440708",
-					"M110,378.7295439440708V375.8275446721525",
-					"M110,375.8275446721525V262.1412093566052",
-					"M110,262.1412093566052V243.44206206951793",
-					"M110,243.44206206951793V182.2324629426413",
-					"M110,182.2324629426413V120.4553010953897",
-					"M110,120.4553010953897V120.3679778202017",
-					"M110,120.3679778202017V119.7950019188811",
-					"M110,119.7950019188811V114.40702765674587",
-					"M110,114.40702765674587V112.23459631264922",
-					"M110,112.23459631264922V103.66603680162933",
-					"M110,103.66603680162933V96.94120535946638",
-					"M110,96.94120535946638V95.60679953820306",
-					"M110,95.60679953820306V91.80139458901215",
-					"M110,91.80139458901215V53.22168007962563",
-					"M110,53.22168007962563V48.97498177523255",
-					"M110,48.97498177523255V48.90533528099098",
-					"M110,48.90533528099098V44.5254094278709",
-					"M110,44.5254094278709V42.30707040714577",
-					"M110,42.30707040714577V41.45454545454555"
+					"M109.80000000000001,446V430.54636550534036",
+					"M109.80000000000001,430.54636550534036V415.09284444699557",
+					"M109.80000000000001,415.09284444699557V411.9639464549821",
+					"M109.80000000000001,411.9639464549821V401.9866088715797",
+					"M109.80000000000001,401.9866088715797V378.7295439440708",
+					"M109.80000000000001,378.7295439440708V375.8275446721525",
+					"M109.80000000000001,375.8275446721525V262.1412093566052",
+					"M109.80000000000001,262.1412093566052V243.44206206951793",
+					"M109.80000000000001,243.44206206951793V182.2324629426413",
+					"M109.80000000000001,182.2324629426413V120.4553010953897",
+					"M109.80000000000001,120.4553010953897V120.3679778202017",
+					"M109.80000000000001,120.3679778202017V119.7950019188811",
+					"M109.80000000000001,119.7950019188811V114.40702765674587",
+					"M109.80000000000001,114.40702765674587V112.23459631264922",
+					"M109.80000000000001,112.23459631264922V103.66603680162933",
+					"M109.80000000000001,103.66603680162933V96.94120535946638",
+					"M109.80000000000001,96.94120535946638V95.60679953820306",
+					"M109.80000000000001,95.60679953820306V91.80139458901215",
+					"M109.80000000000001,91.80139458901215V53.22168007962563",
+					"M109.80000000000001,53.22168007962563V48.97498177523255",
+					"M109.80000000000001,48.97498177523255V48.90533528099098",
+					"M109.80000000000001,48.90533528099098V44.5254094278709",
+					"M109.80000000000001,44.5254094278709V42.30707040714577",
+					"M109.80000000000001,42.30707040714577V41.45454545454555"
 				];
 
 				chkecPath(chart.$.bar.bars, expected);
@@ -251,30 +252,30 @@ describe("SHAPE BAR", () => {
 
 			it("should be stacked correctly: data.order='asc'", () => {
 				const expected = [
-					"M110,128.79097698634183V113.3373424916822",
-					"M110,113.3373424916822V97.8838214333374",
-					"M110,54.793089527912855V51.66419153589936",
-					"M110,97.8838214333374V87.906483849935",
-					"M110,170.74718920093795V147.4901242734291",
-					"M110,51.66419153589936V48.762192263981035",
-					"M110,446V332.3136646844527",
-					"M110,147.4901242734291V128.79097698634183",
-					"M110,270.5365028372011V209.32690371032447",
-					"M110,332.3136646844527V270.5365028372011",
-					"M110,41.61151522397512V41.52419194878712",
-					"M110,42.18449112529572V41.61151522397512",
-					"M110,72.61309289675216V67.22511863461693",
-					"M110,46.54385324325591V44.37142189915926",
-					"M110,87.906483849935V79.33792433891512",
-					"M110,79.33792433891512V72.61309289675216",
-					"M110,44.37142189915926V43.03701607789594",
-					"M110,58.59849447710377V54.793089527912855",
-					"M110,209.32690371032447V170.74718920093795",
-					"M110,62.84519278149685V58.59849447710377",
-					"M110,41.52419194878712V41.45454545454555",
-					"M110,67.22511863461693V62.84519278149685",
-					"M110,48.762192263981035V46.54385324325591",
-					"M110,43.03701607789594V42.18449112529572"
+					"M109.80000000000001,128.79097698634183V113.3373424916822",
+					"M109.80000000000001,113.3373424916822V97.8838214333374",
+					"M109.80000000000001,54.793089527912855V51.66419153589936",
+					"M109.80000000000001,97.8838214333374V87.906483849935",
+					"M109.80000000000001,170.74718920093795V147.4901242734291",
+					"M109.80000000000001,51.66419153589936V48.762192263981035",
+					"M109.80000000000001,446V332.3136646844527",
+					"M109.80000000000001,147.4901242734291V128.79097698634183",
+					"M109.80000000000001,270.5365028372011V209.32690371032447",
+					"M109.80000000000001,332.3136646844527V270.5365028372011",
+					"M109.80000000000001,41.61151522397512V41.52419194878712",
+					"M109.80000000000001,42.18449112529572V41.61151522397512",
+					"M109.80000000000001,72.61309289675216V67.22511863461693",
+					"M109.80000000000001,46.54385324325591V44.37142189915926",
+					"M109.80000000000001,87.906483849935V79.33792433891512",
+					"M109.80000000000001,79.33792433891512V72.61309289675216",
+					"M109.80000000000001,44.37142189915926V43.03701607789594",
+					"M109.80000000000001,58.59849447710377V54.793089527912855",
+					"M109.80000000000001,209.32690371032447V170.74718920093795",
+					"M109.80000000000001,62.84519278149685V58.59849447710377",
+					"M109.80000000000001,41.52419194878712V41.45454545454555",
+					"M109.80000000000001,67.22511863461693V62.84519278149685",
+					"M109.80000000000001,48.762192263981035V46.54385324325591",
+					"M109.80000000000001,43.03701607789594V42.18449112529572",
 				];
 
 				chkecPath(chart.$.bar.bars, expected);
@@ -286,30 +287,30 @@ describe("SHAPE BAR", () => {
 
 			it("should be stacked correctly: data.order='desc'", () => {
 				const expected = [
-					"M110,374.11720296286336V358.6635684682037",
-					"M110,389.57072402120815V374.11720296286336",
-					"M110,435.7903539186462V432.6614559266327",
-					"M110,399.54806160461055V389.57072402120815",
-					"M110,339.96442118111645V316.7073562536076",
-					"M110,438.6923531905645V435.7903539186462",
-					"M110,155.14088077009285V41.45454545454555",
-					"M110,358.6635684682037V339.96442118111645",
-					"M110,278.1276417442211V216.91804261734444",
-					"M110,216.91804261734444V155.14088077009285",
-					"M110,445.93035350575843V445.84303023057043",
-					"M110,445.84303023057043V445.27005432924983",
-					"M110,420.2294268199286V414.8414525577934",
-					"M110,443.0831235553863V440.91069221128964",
-					"M110,408.11662111563044V399.54806160461055",
-					"M110,414.8414525577934V408.11662111563044",
-					"M110,444.4175293766496V443.0831235553863",
-					"M110,432.6614559266327V428.8560509774418",
-					"M110,316.7073562536076V278.1276417442211",
-					"M110,428.8560509774418V424.6093526730487",
-					"M110,446V445.93035350575843",
-					"M110,424.6093526730487V420.2294268199286",
-					"M110,440.91069221128964V438.6923531905645",
-					"M110,445.27005432924983V444.4175293766496"
+					"M109.80000000000001,374.11720296286336V358.6635684682037",
+					"M109.80000000000001,389.57072402120815V374.11720296286336",
+					"M109.80000000000001,435.7903539186462V432.6614559266327",
+					"M109.80000000000001,399.54806160461055V389.57072402120815",
+					"M109.80000000000001,339.96442118111645V316.7073562536076",
+					"M109.80000000000001,438.6923531905645V435.7903539186462",
+					"M109.80000000000001,155.14088077009285V41.45454545454555",
+					"M109.80000000000001,358.6635684682037V339.96442118111645",
+					"M109.80000000000001,278.1276417442211V216.91804261734444",
+					"M109.80000000000001,216.91804261734444V155.14088077009285",
+					"M109.80000000000001,445.93035350575843V445.84303023057043",
+					"M109.80000000000001,445.84303023057043V445.27005432924983",
+					"M109.80000000000001,420.2294268199286V414.8414525577934",
+					"M109.80000000000001,443.0831235553863V440.91069221128964",
+					"M109.80000000000001,408.11662111563044V399.54806160461055",
+					"M109.80000000000001,414.8414525577934V408.11662111563044",
+					"M109.80000000000001,444.4175293766496V443.0831235553863",
+					"M109.80000000000001,432.6614559266327V428.8560509774418",
+					"M109.80000000000001,316.7073562536076V278.1276417442211",
+					"M109.80000000000001,428.8560509774418V424.6093526730487",
+					"M109.80000000000001,446V445.93035350575843",
+					"M109.80000000000001,424.6093526730487V420.2294268199286",
+					"M109.80000000000001,440.91069221128964V438.6923531905645",
+					"M109.80000000000001,445.27005432924983V444.4175293766496",
 				];
 
 				chkecPath(chart.$.bar.bars, expected);
@@ -319,7 +320,7 @@ describe("SHAPE BAR", () => {
 
 	describe("internal.isWithinBar", () => {
 		describe("with normal axis", () => {
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						columns: [
@@ -335,128 +336,128 @@ describe("SHAPE BAR", () => {
 				};
 			});
 
-			it("should not be within bar", done => {
+			it("should not be within bar", () => new Promise(done => {
 				const internal = chart.internal;
 				const bar = chart.$.main.select(`.${$COMMON.target}-data1 .${$BAR.bar}-0`)
 					.on("click", function(event) {
 						internal.state.event = event;
 
 						expect(internal.isWithinBar(this)).to.not.be.ok;
-						done();
+						done(1);
 					});
 
 				util.fireEvent(bar.node(), "click", {
 					clientX: 0,
 					clientY: 0
 				}, chart);
-			});
+			}));
 
-			it("should be within bar", done => {
+			it("should be within bar", () => new Promise(done => {
 				const internal = chart.internal;
 				const bar = chart.$.main.select(`.${$COMMON.target}-data1 .${$BAR.bar}-0`)
 					.on("click", function(event) {
 						internal.state.event = event;
 
 						expect(internal.isWithinBar(this)).to.be.ok;
-						done();
+						done(1);
 					});
 
 				util.fireEvent(bar.node(), "click", {
 					clientX: 31,
 					clientY: 280
 				}, chart);
-			});
+			}));
 
-			it("should not be within bar of negative value", done => {
+			it("should not be within bar of negative value", () => new Promise(done => {
 				const internal = chart.internal;
 				const bar = chart.$.main.select(`.${$COMMON.target}-data3 .${$BAR.bar}-0`)
 					.on("click", function(event) {
 						internal.state.event = event;
 
 						expect(internal.isWithinBar(this)).to.not.be.ok;
-						done();
+						done(1);
 					});
 
 				util.fireEvent(bar.node(), "click", {
 					clientX: 68,
 					clientY: 280
 				}, chart);
-			});
+			}));
 
-			it("should be within bar of negative value", done => {
+			it("should be within bar of negative value", () => new Promise(done => {
 				const internal = chart.internal;
 				const bar = chart.$.main.select(`.${$COMMON.target}-data3 .${$BAR.bar}-0`)
 					.on("click", function(event) {
 						internal.state.event = event;
 
 						expect(internal.isWithinBar(this)).to.be.ok;
-						done();
+						done(1);
 					});
 
 				util.fireEvent(bar.node(), "click", {
 					clientX: 68,
 					clientY: 350
 				}, chart);
-			});
+			}));
 		});
 
 		describe("with rotated axis", () => {
-			before(() => {
+			beforeAll(() => {
 				args.axis.rotated = true;
   			});
 
-			it("should not be within bar", done => {
+			it("should not be within bar", () => new Promise(done => {
 				const internal = chart.internal;
 				const bar = chart.$.main.select(`.${$COMMON.target}-data1 .${$BAR.bar}-0`)
 					.on("click", function(event) {
 						internal.state.event = event;
 
 						expect(internal.isWithinBar(this)).to.not.be.ok;
-						done();
+						done(1);
 					});
 
 				util.fireEvent(bar.node(), "click", {
 					clientX: 0,
 					clientY: 0
 				}, chart);
-			});
+			}));
 
-			it("should be within bar", done => {
+			it("should be within bar", () => new Promise(done => {
 				const internal = chart.internal;
 				const bar = chart.$.main.select(`.${$COMMON.target}-data1 .${$BAR.bar}-0`)
 					.on("click", function(event) {
 						internal.state.event = event;
 
 						expect(internal.isWithinBar(this)).to.be.ok;
-						done();
+						done(1);
 					});
 
 				util.fireEvent(bar.node(), "click", {
 					clientX: 190,
 					clientY: 20
 				}, chart);
-			});
+			}));
 
-			it("should be within bar of negative value", done => {
+			it("should be within bar of negative value", () => new Promise(done => {
 				const internal = chart.internal;
 				const bar = chart.$.main.select(`.${$COMMON.target}-data3 .${$BAR.bar}-0`)
 					.on("click", function(event) {
 						internal.state.event = event;
 
 						expect(internal.isWithinBar(this)).to.be.ok;
-						done();
+						done(1);
 					});
 
 				util.fireEvent(bar.node(), "click", {
 					clientX: 68,
 					clientY: 50
 				}, chart);
-			});
+			}));
 		});
 	});
 
 	describe("multiple xs", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					type: "bar",
@@ -516,13 +517,13 @@ describe("SHAPE BAR", () => {
 
 		it("Bars should be positioned correctly", () => {
 			const expectedPath = [
-				"M154.73095238095237,426V39.63636363636365 H159.03095238095239 V426z",
-				"M95.53333333333333,426V232.8181818181818 H99.83333333333333 V426z",
-				"M195.36666666666665,426V232.8181818181818 H199.66666666666666 V426z",
-				"M494.8666666666667,426V232.8181818181818 H499.1666666666667 V426z",
-				"M99.83333333333333,426V39.63636363636365 H104.13333333333333 V426z",
-				"M199.66666666666666,426V39.63636363636365 H203.96666666666667 V426z",
-				"M499.1666666666667,426V39.63636363636365 H503.4666666666667 V426z"
+				"M154.74166666666667,426V39.63636363636365 H159.0202380952381 V426z",
+				"M95.5547619047619,426V232.8181818181818 H99.83333333333333 V426z",
+				"M195.38809523809522,426V232.8181818181818 H199.66666666666666 V426z",
+				"M494.8880952380953,426V232.8181818181818 H499.1666666666667 V426z",
+				"M99.83333333333333,426V39.63636363636365 H104.11190476190475 V426z",
+				"M199.66666666666666,426V39.63636363636365 H203.9452380952381 V426z",
+				"M499.1666666666667,426V39.63636363636365 H503.4452380952381 V426z",
 			];
 
 			chart.$.bar.bars.each(function() {
@@ -538,16 +539,16 @@ describe("SHAPE BAR", () => {
 
 		it("Grouped bars should be positined correctly", () => {
 			const expectedPath = [
-				"M152.58095238095237,426V168.4242424242424 H161.18095238095236 V426z",
-				"M95.53333333333333,426V297.21212121212125 H104.13333333333333 V426z",
-				"M195.36666666666665,426V297.21212121212125 H203.96666666666664 V426z",
-				"M494.8666666666667,426V297.21212121212125 H503.4666666666667 V426z",
-				"M95.53333333333333,297.21212121212125V39.636363636363654 H104.13333333333333 V297.21212121212125z",
-				"M195.36666666666665,297.21212121212125V39.636363636363654 H203.96666666666664 V297.21212121212125z",
-				"M494.8666666666667,297.21212121212125V39.636363636363654 H503.4666666666667 V297.21212121212125z"
-			];
+				"M152.60238095238094,426V168.4242424242424 H161.1595238095238 V426z",
+				"M95.5547619047619,426V297.21212121212125 H104.11190476190475 V426z",
+				"M195.38809523809522,426V297.21212121212125 H203.94523809523807 V426z",
+				"M494.8880952380953,426V297.21212121212125 H503.44523809523815 V426z",
+				"M95.5547619047619,297.21212121212125V39.636363636363654 H104.11190476190475 V297.21212121212125z",
+				"M195.38809523809522,297.21212121212125V39.636363636363654 H203.94523809523807 V297.21212121212125z",
+				"M494.8880952380953,297.21212121212125V39.636363636363654 H503.44523809523815 V297.21212121212125z",
+			  ];
 
-			chart.$.bar.bars.each(function() {
+			  chart.$.bar.bars.each(function() {
 				expect(this.getAttribute("d")).to.be.equal(expectedPath.shift());
 			});
 		});
@@ -557,7 +558,7 @@ describe("SHAPE BAR", () => {
 		const width = 15;
 		const padding = 3;
 
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					type: "bar",
@@ -605,8 +606,8 @@ describe("SHAPE BAR", () => {
 
 		it("check the bar radius", () => {
 			const path = [
-				"M228.91666666666669,331.55555555555554V380.5833333333333 a10,10 1 0 0 10,10H233.91666666666669 a10,10 1 0 0 10,-10V331.55555555555554z",
-				"M246.91666666666669,331.55555555555554V223.5 a10,10 0 0 1 10,-10H251.91666666666669 a10,10 0 0 1 10,10V331.55555555555554z"
+				"M228.91666666666669,331.55555555555554V380.5833333333333 a10 10 1 0 0 10,10H233.91666666666669 a10 10 1 0 0 10,-10V331.55555555555554z",
+				"M246.91666666666669,331.55555555555554V223.5 a10 10 0 0 1 10,-10H251.91666666666669 a10 10 0 0 1 10,10V331.55555555555554z"
 			];
 
 			checkRadius(path);
@@ -618,8 +619,8 @@ describe("SHAPE BAR", () => {
 
 		it("check the rotated axis bar radius", () => {
 			checkRadius([
-				"M131.11111111111111,161.16666666666669H59.166666666666664 a10,10 1 0 0 -10,10V166.16666666666669 a10,10 1 0 0 10,10H131.11111111111111z",
-				"M131.11111111111111,179.16666666666669H285 a10,10 0 0 1 10,10V184.16666666666669 a10,10 0 0 1 -10,10H131.11111111111111z"
+				"M131.11111111111111,161.16666666666669H59.166666666666664 a10 10 1 0 0 -10,10V166.16666666666669 a10 10 1 0 0 10,10H131.11111111111111z",
+				"M131.11111111111111,179.16666666666669H285 a10 10 0 0 1 10,10V184.16666666666669 a10 10 0 0 1 -10,10H131.11111111111111z"
 			]);
 		});
 
@@ -630,8 +631,8 @@ describe("SHAPE BAR", () => {
 
 		it("check the axis bar radius in ratio", () => {
 			const path = [
-				"M228.91666666666669,331.55555555555554V383.0833333333333 a7.5,7.5 1 0 0 7.5,7.5H236.41666666666669 a7.5,7.5 1 0 0 7.5,-7.5V331.55555555555554z",
-				"M246.91666666666669,331.55555555555554V221 a7.5,7.5 0 0 1 7.5,-7.5H254.41666666666669 a7.5,7.5 0 0 1 7.5,7.5V331.55555555555554z"
+				"M228.91666666666669,331.55555555555554V383.0833333333333 a7.5 7.5 1 0 0 7.5,7.5H236.41666666666669 a7.5 7.5 1 0 0 7.5,-7.5V331.55555555555554z",
+				"M246.91666666666669,331.55555555555554V221 a7.5 7.5 0 0 1 7.5,-7.5H254.41666666666669 a7.5 7.5 0 0 1 7.5,7.5V331.55555555555554z"
 			];
 
 			checkRadius(path);
@@ -746,10 +747,49 @@ describe("SHAPE BAR", () => {
 			expect(bars.previousSibling.classList.contains($LINE.chartLines)).to.be.true;
 			expect(bars.nextSibling.classList.contains($EVENT.eventRects)).to.be.true;
 		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					columns: [ 
+						["data1", 30, 200, 100],
+						["data2", 130, 100, 140]
+					],
+					type: "bar"
+				},
+				bar: {
+					width: function(width, targetsNum, maxDataCount) {
+						return width / (targetsNum * maxDataCount)
+					}
+				}
+			}
+		});
+
+		it("should bar width size adjust from width callback", () => {
+			const getTargetWidth = () => {
+				const chartWidth = chart.internal.state.width;
+				const data = chart.data();
+				const targetsNum = data.length;
+				const maxDataCount = data[0].values.length;
+				
+				return args.bar.width(chartWidth, targetsNum, maxDataCount);
+			}
+
+			chart.$.bar.bars.each(function() {
+				expect(this.getBoundingClientRect().width).to.be.closeTo(getTargetWidth(), 1);
+			});
+
+			// when
+			chart.resize({width: 500});
+
+			chart.$.bar.bars.each(function() {
+				expect(this.getBoundingClientRect().width).to.be.closeTo(getTargetWidth(), 1);
+			});
+		});
 	});
 
 	describe("bar indices", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -781,7 +821,7 @@ describe("SHAPE BAR", () => {
 	});
 
 	describe("bar radius", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -858,7 +898,7 @@ describe("SHAPE BAR", () => {
 			];
 
 			chart.$.bar.bars.each(function(d) {
-				const hasRadius = !/a0,0/.test(this.getAttribute("d"));
+				const hasRadius = !/a0 0/.test(this.getAttribute("d"));
 
 				if (hasRadius) {
 					const found = expected[d.index].some(v => v.id === d.id && v.value === d.value);
@@ -892,7 +932,7 @@ describe("SHAPE BAR", () => {
 			};
 		});
 
-		it("path data should remain with Arc command with value 0(zero).", done => {
+		it("path data should remain with Arc command with value 0(zero).", () => new Promise(done => {
 			// when
 			chart.load({
 				columns: [["d3", 3, 5, 8, 3, 9, 0]],
@@ -900,10 +940,10 @@ describe("SHAPE BAR", () => {
 					const d = this.$.bar.bars.filter(":last-child").attr("d");
 
 					expect(/\sa\d+/.test(d)).to.be.true;
-					done();
+					done(1);
 				}
 			});
-		});
+		}));
 
 		it("set options", () => {
 			args = {				
@@ -927,8 +967,8 @@ describe("SHAPE BAR", () => {
 
 		it("radius should be rendered correclty on rotated axis", () => {
 			const expected = [
-				'M295,85.80000000000001H477.23333333333323 a63.599999999999994,63.599999999999994 0 0 1 63.599999999999994,63.599999999999994V149.4 a63.599999999999994,63.599999999999994 0 0 1 -63.599999999999994,63.599999999999994H295z',
-				'M295,213H112.76666666666665 a63.599999999999994,63.599999999999994 1 0 0 -63.599999999999994,63.599999999999994V276.6 a63.599999999999994,63.599999999999994 1 0 0 63.599999999999994,63.599999999999994H295z'
+				'M295,85.80000000000001H477.23333333333323 a63.599999999999994 63.599999999999994 0 0 1 63.599999999999994,63.599999999999994V149.4 a63.599999999999994 63.599999999999994 0 0 1 -63.599999999999994,63.599999999999994H295z',
+				'M295,213H112.76666666666665 a63.599999999999994 63.599999999999994 1 0 0 -63.599999999999994,63.599999999999994V276.6 a63.599999999999994 63.599999999999994 1 0 0 63.599999999999994,63.599999999999994H295z'
 			];
 
 			chart.$.bar.bars.each(function() {
@@ -944,8 +984,8 @@ describe("SHAPE BAR", () => {
 
 		it("radius should be rendered correclty on rotated & inverted axis", () => {
 			const expected = [
-				'M295,85.80000000000001H112.76666666666668 a63.599999999999994,63.599999999999994 1 0 0 -63.599999999999994,63.599999999999994V149.4 a63.599999999999994,63.599999999999994 1 0 0 63.599999999999994,63.599999999999994H295z',
-				'M295,213H477.23333333333323 a63.599999999999994,63.599999999999994 0 0 1 63.599999999999994,63.599999999999994V276.6 a63.599999999999994,63.599999999999994 0 0 1 -63.599999999999994,63.599999999999994H295z'
+				'M295,85.80000000000001H112.76666666666668 a63.599999999999994 63.599999999999994 1 0 0 -63.599999999999994,63.599999999999994V149.4 a63.599999999999994 63.599999999999994 1 0 0 63.599999999999994,63.599999999999994H295z',
+				'M295,213H477.23333333333323 a63.599999999999994 63.599999999999994 0 0 1 63.599999999999994,63.599999999999994V276.6 a63.599999999999994 63.599999999999994 0 0 1 -63.599999999999994,63.599999999999994H295z'
 			];
 
 			chart.$.bar.bars.each(function() {
@@ -954,8 +994,154 @@ describe("SHAPE BAR", () => {
 		});
 	});
 
+	describe("bar radius surpassing condition", () => {
+		beforeAll(() => {
+			args = {
+				data: {
+					type: "bar",
+					columns:[
+						["data", -10289158423, -204482173, 3075954443]
+					]
+				},
+				axis: {
+					y: {
+						"min":-50000000000,
+						"max":50000000000,
+						"tick":{
+							"show":false,
+							"outer":false,
+							"text":{
+								"position":{
+									"x":-20
+								}
+							},
+							"stepSize": 25000000000
+						},"padding":0
+					}
+				},
+				bar: {
+					radius: 2,
+					width: 10,
+					padding: 2
+				}
+			};
+		});
+
+		it("should negative value set clip-path", () => {
+			chart.$.bar.bars.each(function(d, i) {
+				if (i === 1) {
+					const d = this.getAttribute("d");					
+					const value = [d.match(/,([^V]*)/)[1], d.match(/V([^\s]*)/)[1]].reduce((a, c) => +a - +c);
+
+					expect(+this.style.clipPath.match(/\(([^px]*)/)[1]).to.be.closeTo(value, 1);
+				} else {
+					expect(this.style.clipPath).to.be.equal("");
+				}
+			});
+		});
+
+		it("set options: set positive data value", () => {
+			args.data.columns[0][2] = 204482173;
+		});
+
+		it("should positive value set clip-path", () => {
+			chart.$.bar.bars.each(function(d, i) {
+				if (i === 1) {
+					const d = this.getAttribute("d");					
+					const value = [d.match(/,([^V]*)/)[1], d.match(/V([^\s]*)/)[1]].reduce((a, c) => +c - +a);
+
+					expect(+this.style.clipPath.match(/\s([^px]*)px\)$/)[1]).to.be.closeTo(value, 1);
+				} else {
+					expect(this.style.clipPath).to.be.equal("");
+				}
+			});
+		});
+
+		it("set options: axis.rotated=true", () => {
+			args.axis.rotated = true;
+		});
+
+		it("should positive value set clip-path for rotated axis", () => {
+			chart.$.bar.bars.each(function(d, i) {
+				if (i === 1) {
+					const d = this.getAttribute("d");					
+					const value = [d.match(/M([^,]*)/)[1], d.match(/H([^\s]*)/)[1]].reduce((a, c) => +a - +c);
+
+					expect(+this.style.clipPath.match(/\s([^px]*)px\)$/)[1]).to.be.closeTo(value, 1);
+				} else {
+					expect(this.style.clipPath).to.be.equal("");
+				}
+			});
+		});
+
+		it("set options: set negative data value", () => {
+			args.data.columns[0][2] = -204482173;
+		});
+
+		it("should negative value set clip-path for rotated axis", () => {
+			chart.$.bar.bars.each(function(d, i) {
+				if (i === 1) {
+					const d = this.getAttribute("d");					
+					const value = [d.match(/M([^,]*)/)[1], d.match(/H([^\s]*)/)[1]].reduce((a, c) => +c - +a);
+
+					expect(+this.style.clipPath.match(/px\s([^px]*)/)[1]).to.be.closeTo(value, 1);
+				} else {
+					expect(this.style.clipPath).to.be.equal("");
+				}
+			});
+		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", -80],
+						["data2", 80],
+						["data3", -120]
+					],
+					type: "bar",
+					groups: [
+						[
+							"data1",
+							"data2"
+						]
+					],
+					order: "desc"
+				},
+				bar: {
+					radius: {
+						ratio: 0.5
+					}
+				},
+				transition: {
+					duration: 0
+				}
+			};
+		});
+
+		it("clip-path style should be updated", () => {
+			// when
+			chart.hide("data3");
+			
+			chart.$.bar.bars.each(function(d) {
+				if (d.id !== "data3") {
+					expect(this.style.clipPath.length > 0).to.be.true;
+				} else {
+					expect(this.style.clipPath).to.be.equal("");
+				}					
+			});
+
+			// when
+			chart.show("data3");
+
+			chart.$.bar.bars.each(function(d) {
+				expect(this.style.clipPath).to.be.equal("");
+			});
+		})
+	});
+
 	describe("bar linear gradient", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -1074,24 +1260,22 @@ describe("SHAPE BAR", () => {
 			};
 		});
 
-		it("should generate customized liearGradient element", done => {
-			setTimeout(() => {
-				chart.load({
-				  columns: [
+		it("should generate customized liearGradient element", () => new Promise(done => {
+			chart.load({
+				columns: [
 					["data", 10, 20, 30, 40]
-				  ],
-				  done: () => {
-					  expect(chart.$.defs.select("linearGradient").empty()).to.be.false;
-					  done();
-				  }
-				});
-			  }, 1000);
-		});
+				],
+				done() {
+					expect(chart.$.defs.select("linearGradient").empty()).to.be.false;
+					done(1);
+				}
+			});
+		}));
 
 	});
 
 	describe("bar overlap", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -1124,7 +1308,7 @@ describe("SHAPE BAR", () => {
 				const bar = bars.filter(d => d.id === id).nodes();
 
 				ticks.forEach((t, i) => {
-					const xPos = +bar[i].getAttribute("d").match(re)?.[1] ?? 0;
+					const xPos = +bar[i].getAttribute("d").match(re)?.[1] || 0;
 					const expectedX = t - width[id] / 2;
 
 					expect(xPos).to.be.closeTo(expectedX, 1);
@@ -1134,7 +1318,7 @@ describe("SHAPE BAR", () => {
 	});
 
 	describe("bar position", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 				  columns: [
@@ -1248,7 +1432,7 @@ describe("SHAPE BAR", () => {
 	});
 
 	describe("bar sensitivity", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				size: {
 					width: 400,
@@ -1293,7 +1477,7 @@ describe("SHAPE BAR", () => {
 	});
 
 	describe("bar label.threshold", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -1326,7 +1510,7 @@ describe("SHAPE BAR", () => {
 			expect(res).to.be.deep.equal(expected);
 		}
 
-		it("check data label shown #1", done => {
+		it("check data label shown #1", () => new Promise(done => {
 			checkLabel([1000, -1000]);
 
 			// when
@@ -1334,33 +1518,33 @@ describe("SHAPE BAR", () => {
 
 			setTimeout(() => {
 				checkLabel([230, -230, -1000]);
-				done();
+				done(1);
 			}, 350);
-		});
+		}));
 
-		it("check data label shown #2", done => {
+		it("check data label shown #2", () => new Promise(done => {
 			// when
 			chart.hide(["data2", "data4"]);
 
 			setTimeout(() => {
 				checkLabel([230, -230]);
-				done();
+				done(1);
 			}, 350);
-		});
+		}));
 
-		it("check data label shown #3", done => {
+		it("check data label shown #3", () => new Promise(done => {
 			// when
 			chart.hide(["data1", "data2", "data4"]);
 
 			setTimeout(() => {
 				checkLabel([-30, -230]);
-				done();
+				done(1);
 			}, 350);
-		});
+		}));
 	});
 
 	describe("bar width on zoom", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -1377,7 +1561,7 @@ describe("SHAPE BAR", () => {
 			};
 		});
 
-		it("should maintain width size after toggle", done => {
+		it("should maintain width size after toggle", () => new Promise(done => {
 			const zoomBarWidth: number[] = [];
 
 			// when
@@ -1410,9 +1594,9 @@ describe("SHAPE BAR", () => {
 					expect(w).to.be.equal(zoomBarWidth[i]);
 				});
 
-				done();
+				done(1);
 			});
-		});
+		}));
 	});
 
 	describe("bar within a range", () => {
@@ -1427,8 +1611,9 @@ describe("SHAPE BAR", () => {
 			});
 			const expectedPath = [
 				"M59.900000000000006,297.21212121212125V168.4242424242424 H239.6 V297.21212121212125z",
-				"M359.4,168.4242424242424V39.63636363636365 H539.0999999999999 V168.4242424242424z"
+				"M359.4,168.4242424242424V39.63636363636365 H539.0999999999999 V168.4242424242424z",
 			];
+
 			chart.$.bar.bars.each(function(d, i) {
 				expect(this.getAttribute("d")).to.be.equal(expectedPath[i]);
 			});
@@ -1473,15 +1658,16 @@ describe("SHAPE BAR", () => {
 				}
 			});
 			const expectedPathMap = {
-				data1: [
-					"M59.05,213.5V124.95833333333331 H147.25 V213.5z",
-					"M353.55,124.95833333333331V36.41666666666668 H441.75 V124.95833333333331z"
+				"data1": [
+				  "M58.900000000000006,213.5V124.95833333333331 H147.25 V213.5z",
+				  "M353.4,124.95833333333331V36.41666666666668 H441.75 V124.95833333333331z",
 				],
-				data2: [
-					"M147.25,390.5833333333333V213.5 H235.45 V390.5833333333333z",
-					"M441.75,346.3125V328.6041666666667 H529.95 V346.3125z"
+				"data2": [
+				  "M147.25,390.5833333333333V213.5 H235.6 V390.5833333333333z",
+				  "M441.75,346.3125V328.6041666666667 H530.1 V346.3125z",
 				],
-			};
+			  };
+
 			chart.$.bar.bars.each(function(d, i) {
 				expect(this.getAttribute("d")).to.be.equal(expectedPathMap[d.id][i]);
 			});
@@ -1498,19 +1684,20 @@ describe("SHAPE BAR", () => {
 				}
 			});
 			const expectedPathMap = {
-				data1: [
-					"M29.525,302.04166666666663V213.5 H73.625 V302.04166666666663z",
-					"M176.775,302.04166666666663V124.95833333333331 H220.875 V302.04166666666663z",
-					"M324.025,213.5V124.95833333333331 H368.125 V213.5z",
-					"M471.275,124.95833333333331V36.41666666666668 H515.375 V124.95833333333331z"
+				"data1": [
+				  "M29.450000000000003,302.04166666666663V213.5 H73.625 V302.04166666666663z",
+				  "M176.7,302.04166666666663V124.95833333333331 H220.875 V302.04166666666663z",
+				  "M323.95,213.5V124.95833333333331 H368.125 V213.5z",
+				  "M471.2,124.95833333333331V36.41666666666668 H515.375 V124.95833333333331z",
 				],
-				data2: [
-					"M73.625,302.04166666666663V390.5833333333333 H117.725 V302.04166666666663z",
-					"M220.875,302.04166666666663V346.3125 H264.975 V302.04166666666663z",
-					"M368.125,390.5833333333333V213.5 H412.225 V390.5833333333333z",
-					"M515.375,346.3125V328.6041666666667 H559.475 V346.3125z"
+				"data2": [
+				  "M73.625,302.04166666666663V390.5833333333333 H117.8 V302.04166666666663z",
+				  "M220.875,302.04166666666663V346.3125 H265.05 V302.04166666666663z",
+				  "M368.125,390.5833333333333V213.5 H412.3 V390.5833333333333z",
+				  "M515.375,346.3125V328.6041666666667 H559.55 V346.3125z",
 				],
 			};
+
 			chart.$.bar.bars.each(function(d, i) {
 				expect(this.getAttribute("d")).to.be.equal(expectedPathMap[d.id][i]);
 			});
@@ -1528,19 +1715,20 @@ describe("SHAPE BAR", () => {
 				}
 			});
 			const expectedPathMap = {
-				data1: [
-					"M29.525,302.04166666666663V213.5 H117.725 V302.04166666666663z",
-					"M176.775,302.04166666666663V124.95833333333331 H264.975 V302.04166666666663z",
-					"M324.025,213.5V124.95833333333331 H412.22499999999997 V213.5z",
-					"M471.275,124.95833333333331V36.41666666666668 H559.475 V124.95833333333331z"
-				],
-				data2: [
-					"M29.525,302.04166666666663V390.5833333333333 H117.725 V302.04166666666663z",
-					"M176.775,302.04166666666663V346.3125 H264.975 V302.04166666666663z",
-					"M324.025,390.5833333333333V257.77083333333337 H412.22499999999997 V390.5833333333333z",
-					"M471.275,346.3125V328.6041666666667 H559.475 V346.3125z"
-				],
+				"data1": [
+					"M29.450000000000003,302.04166666666663V213.5 H117.8 V302.04166666666663z",
+					"M176.7,302.04166666666663V124.95833333333331 H265.04999999999995 V302.04166666666663z",
+					"M323.95,213.5V124.95833333333331 H412.29999999999995 V213.5z",
+					"M471.2,124.95833333333331V36.41666666666668 H559.55 V124.95833333333331z",
+				  ],
+				  "data2": [
+					"M29.450000000000003,302.04166666666663V390.5833333333333 H117.8 V302.04166666666663z",
+					"M176.7,302.04166666666663V346.3125 H265.04999999999995 V302.04166666666663z",
+					"M323.95,390.5833333333333V257.77083333333337 H412.29999999999995 V390.5833333333333z",
+					"M471.2,346.3125V328.6041666666667 H559.55 V346.3125z",
+				  ],
 			};
+
 			chart.$.bar.bars.each(function(d, i) {
 				expect(this.getAttribute("d")).to.be.equal(expectedPathMap[d.id][i]);
 			});
@@ -1548,7 +1736,7 @@ describe("SHAPE BAR", () => {
 	});
 
 	describe("rotated & inverted axis", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [

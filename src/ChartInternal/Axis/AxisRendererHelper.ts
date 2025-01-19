@@ -3,9 +3,9 @@
  * billboard.js project is licensed under the MIT license
  * @ignore
  */
-import {getScale} from "../internals/scale";
-import {isDefined, isNumber, isString, isValue} from "../../module/util";
 import type {d3Selection} from "../../../types/types";
+import {isDefined, isNumber, isString, isValue} from "../../module/util";
+import {getScale} from "../internals/scale";
 
 export default class AxisRendererHelper {
 	private owner;
@@ -30,35 +30,36 @@ export default class AxisRendererHelper {
 
 	/**
 	 * Compute a character dimension
-	 * @param {d3.selection} node <g class=tick> node
+	 * @param {d3.selection} text SVG text selection
+	 * @param {boolean} memoize memoize the calculated size
 	 * @returns {{w: number, h: number}}
 	 * @private
 	 */
-	static getSizeFor1Char(node?) {
+	static getSizeFor1Char(text: d3Selection, memoize = true): {w: number, h: number} {
 		// default size for one character
 		const size = {
 			w: 5.5,
 			h: 11.5
 		};
 
-		!node.empty() && node.select("text")
+		!text.empty() && text
 			.text("0")
-			.call(el => {
+			.call((el: d3Selection) => {
 				try {
-					const {width, height} = el.node()
-						.getBBox();
+					const {width, height} = el.node().getBBox();
 
 					if (width && height) {
 						size.w = width;
 						size.h = height;
 					}
-				} catch (e) {
 				} finally {
 					el.text("");
 				}
 			});
 
-		this.getSizeFor1Char = () => size;
+		if (memoize) {
+			this.getSizeFor1Char = () => size;
+		}
 
 		return size;
 	}
@@ -71,15 +72,16 @@ export default class AxisRendererHelper {
 	 */
 	getTickTransformSetter(id: string): (selection: d3Selection, scale) => void {
 		const {config} = this;
-		// !!AdRem!!
 		const fn = id === "x" ?
-			value => `translate(${value + config.tickOffset | 0},0)` :
+			value => `translate(${value + config.tickOffset},0)` :
 			value => `translate(0,${value})`;
 
 		return (selection, scale) => {
-			selection.attr("transform", d => (
-				isValue(d) ? fn(Math.ceil(scale(d)) ?? 0) : null
-			));
+			selection.attr("transform", d => {
+				const x = scale(d);
+
+				return isValue(d) ? fn(x) : null;
+			});
 		};
 	}
 
@@ -158,8 +160,7 @@ export default class AxisRendererHelper {
 		// to round float numbers from 'binary floating point'
 		// https://en.wikipedia.org/wiki/Double-precision_floating-point_format
 		// https://stackoverflow.com/questions/17849101/laymans-explanation-for-why-javascript-has-weird-floating-math-ieee-754-stand
-		const value = /\d+\.\d+0{5,}\d$/.test(v) ? +String(v)
-			.replace(/0+\d$/, "") : v;
+		const value = /\d+\.\d+0{5,}\d$/.test(v) ? +String(v).replace(/0+\d$/, "") : v;
 		const formatted = tickFormat ? tickFormat(value) : value;
 
 		return isDefined(formatted) ? formatted : "";
@@ -176,8 +177,7 @@ export default class AxisRendererHelper {
 			// https://github.com/naver/billboard.js/issues/2140
 			try {
 				transitionSelection = selection.transition(config.transition);
-			} catch (e) {
-			}
+			} catch {}
 		}
 
 		return transitionSelection;

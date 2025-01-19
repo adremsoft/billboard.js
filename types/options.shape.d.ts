@@ -42,6 +42,13 @@ export interface ArcOptions {
 		 *  - **NOTE:**
 		 *   - For single gauge chart, needle will point the data value by default, otherwise will point 0(zero).
 		 */
+		value?: number;
+
+		/**
+		 * Set needle value.
+		 *  - **NOTE:**
+		 *   - For single gauge chart, needle will point the data value by default, otherwise will point 0(zero).
+		 */
 		length?: number;
 
 		/**
@@ -86,6 +93,38 @@ export interface ArcOptions {
 			len?: number;
 		}
 	};
+
+	/**
+	 * Set range text options.
+	 */
+	rangeText?: {
+		/**
+		 * Set range text values to be shown around Arc.
+		 * - When `unit: 'absolute'`: Given values are treated as absolute values.
+		 * - When `unit: '%'`: Given values are treated as percentages.
+		 */
+		values?: number[];
+
+		/**
+		 * Specify the range text unit.
+		 */
+		unit?: "absolute" | "%";
+
+		/**
+		 * Set if range text shown will be fixed w/o data toggle update. Only available for gauge chart.
+		 */
+		fixed?: boolean;
+
+		/**
+		 * Set format function for the range text.
+		 */
+		format?: (v: number) => number;
+
+		/**
+		 * Set position function or object for the range text.
+		 */
+		position?: ((v: number) => {x?: number; y?: number})|{x?: number, y?: number};
+	}
 }
 
 export interface AreaOptions {
@@ -152,7 +191,7 @@ export interface BarOptions {
 	/**
 	 * Bars will be rendered at same position, which will be overlapped each other. (for non-grouped bars only)
 	 */
-	orverlap?: boolean;
+	overlap?: boolean;
 
 	/**
 	 * The padding pixel value between each bar.
@@ -178,7 +217,16 @@ export interface BarOptions {
 	/**
 	 * Change the width of bar chart. If ratio is specified, change the width of bar chart by ratio.
 	 */
-	width?: number | {
+	width?: number | (
+		/**
+		 * Specify width callback
+		 * The callback will receive width, targetsNum, maxDataCount as arguments.
+	 	 * - width: chart area width
+	 	 * - targetsNum: number of targets
+	 	 * - maxDataCount: maximum data count among targets
+		 */
+		(width: number, targetsNum: number, maxDataCount: number) => number
+	) | {
 		/**
 		 * Set the width of each bar by ratio
 		 */
@@ -312,6 +360,24 @@ export interface DonutOptions {
 	title?: string;
 }
 
+export interface FunnelOptions {
+	neck: {
+		/**
+		 * Set funnel neck width.
+		 */
+		width?: number | {
+			ratio: number
+		};
+		
+		/**
+		 * Set funnel neck height.
+		 */
+		height?: number | {
+			ratio: number
+		};
+	}
+}
+
 export interface GaugeOptions {
 	/**
 	 * Set background color. (The `.bb-chart-arcs-background` element)
@@ -342,6 +408,11 @@ export interface GaugeOptions {
 		extents?(this: Chart, value: number, isMax: boolean): string | number;
 
 		/**
+		 * Set ratio of labels position.
+		 */
+		ratio?: ((this: Chart, d: DataItem, radius: number, h: number) => void) | number
+
+		/**
 		 * Set threshold ratio to show/hide labels.
 		 */
 		threshold?: number;
@@ -366,6 +437,14 @@ export interface GaugeOptions {
 	 * Set type of the gauge.
 	 */
 	type?: GaugeTypes;
+
+	/**
+	 * Enforce to given min/max value.
+	 * **Note:** Only works for single data series.
+	 * 	- When `gauge.min=50` and given value is `30`, gauge will render as empty value.
+	 * 	- When `gauge.max=100` and given value is `120`, gauge will render till 100, not surpassing max value.
+	 */
+	enforceMinMax?: boolean;
 
 	/**
 	 * Set min value of the gauge.

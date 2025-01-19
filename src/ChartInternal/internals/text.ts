@@ -2,15 +2,22 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {
-	select as d3Select,
-	selectAll as d3SelectAll
-} from "d3-selection";
-import {KEY} from "../../module/Cache";
-import {$COMMON, $TEXT} from "../../config/classes";
-import {capitalize, getBoundingRect, getRandom, isFunction, isNumber, isObject, isString, getTranslation, setTextValue} from "../../module/util";
-import type {IDataRow, IArcData} from "../data/IData";
+import {select as d3Select, selectAll as d3SelectAll} from "d3-selection";
 import type {AxisType} from "../../../types/types";
+import {$COMMON, $TEXT} from "../../config/classes";
+import {KEY} from "../../module/Cache";
+import {
+	capitalize,
+	getBoundingRect,
+	getRandom,
+	getTranslation,
+	isFunction,
+	isNumber,
+	isObject,
+	isString,
+	setTextValue
+} from "../../module/util";
+import type {IArcData, IDataRow} from "../data/IData";
 
 type Coord = {x: number, y: number};
 type Anchor = "start" | "middle" | "end";
@@ -46,7 +53,11 @@ function getRotateAnchor(angle: number): Anchor {
  * @private
  */
 function setRotatePos(
-	d: IDataRow, pos: Coord, anchor: Anchor, isRotated: boolean, isInverted: boolean
+	d: IDataRow,
+	pos: Coord,
+	anchor: Anchor,
+	isRotated: boolean,
+	isInverted: boolean
 ): Coord {
 	const $$ = this;
 	const {value} = d;
@@ -112,8 +123,11 @@ export default {
 		const $$ = this;
 
 		return $$.isBarType(d) && !$$.meetsLabelThreshold(
-			Math.abs($$.getRatio("bar", d)), "bar"
-		) ? "0" : ($$.hasDataLabel ? null : "0");
+				Math.abs($$.getRatio("bar", d)),
+				"bar"
+			) ?
+			"0" :
+			($$.hasDataLabel ? null : "0");
 	},
 
 	/**
@@ -125,7 +139,7 @@ export default {
 
 		$el.main.select(`.${$COMMON.chart}`).append("g")
 			.attr("class", $TEXT.chartTexts)
-			.style("pointer-events", $el.treemap ? "none" : null);
+			.style("pointer-events", $el.funnel || $el.treemap ? "none" : null);
 	},
 
 	/**
@@ -147,7 +161,10 @@ export default {
 		const mainTextEnter = mainTextUpdate.enter().append("g")
 			.style("opacity", "0")
 			.attr("class", classChartText)
-			.call($$.setCssRule(true, ` .${$TEXT.text}`, ["fill", "pointer-events:none"], $$.updateTextColor));
+			.call(
+				$$.setCssRule(true, ` .${$TEXT.text}`, ["fill", "pointer-events:none"],
+					$$.updateTextColor)
+			);
 
 		mainTextEnter.append("g")
 			.attr("class", classTexts);
@@ -207,7 +224,8 @@ export default {
 					}
 				}
 
-				value = $$.isTreemapType(d) ? $$.treemapDataLabelFormat(d)(node) :
+				value = $$.isTreemapType(d) ?
+					$$.treemapDataLabelFormat(d)(node) :
 					$$.dataLabelFormat(d.id)(value, d.id, d.index, texts);
 
 				if (isNumber(value)) {
@@ -222,8 +240,10 @@ export default {
 		const $$ = this;
 		const {config} = $$;
 		const labelColors = config.data_labels_colors;
-		const defaultColor = ($$.isArcType(d) && !$$.isRadarType(d)) || $$.isTreemapType(d) ?
-			null : $$.color(d);
+		const defaultColor =
+			($$.isArcType(d) && !$$.isRadarType(d)) || $$.isFunnelType(d) || $$.isTreemapType(d) ?
+				null :
+				$$.color(d);
 		let color;
 
 		if (isString(labelColors)) {
@@ -252,17 +272,19 @@ export default {
 	/**
 	 * Update data label text background color
 	 * @param {object} d Data object
+	 * @param {object|string} option option object
 	 * @returns {string|null}
 	 * @private
 	 */
-	updateTextBackgroundColor(d: IDataRow | IArcData): string | null {
+	updateTextBGColor(d: IDataRow | IArcData, option): string | null {
 		const $$ = this;
-		const {$el, config} = $$;
-		const backgroundColor = config.data_labels_backgroundColors;
+		const {$el} = $$;
 		let color: string = "";
 
-		if (isString(backgroundColor) || isObject(backgroundColor)) {
-			const id = isString(backgroundColor) ? "" : $$.getTargetSelectorSuffix(("id" in d ? d.id : d.data.id));
+		if (isString(option) || isObject(option)) {
+			const id = isString(option) ?
+				"" :
+				$$.getTargetSelectorSuffix("id" in d ? d.id : d.data.id);
 			const filter = $el.defs.select(["filter[id*='labels-bg", "']"].join(id));
 
 			if (filter.size()) {
@@ -293,11 +315,13 @@ export default {
 
 		$$.$el.text
 			.style("fill", $$.getStylePropValue($$.updateTextColor))
-			.attr("filter", $$.updateTextBackgroundColor.bind($$))
+			.attr("filter",
+				d => $$.updateTextBGColor.bind($$)(d, config.data_labels_backgroundColors))
 			.style("fill-opacity", forFlow ? 0 : $$.opacityForText.bind($$))
 			.each(function(d: IDataRow, i: number) {
 				// do not apply transition for newly added text elements
-				const node = $T(hasTreemap && this.childElementCount ? this.parentNode : this, !!(withTransition && this.getAttribute("x")), t);
+				const node = $T(hasTreemap && this.childElementCount ? this.parentNode : this,
+					!!(withTransition && this.getAttribute("x")), t);
 				const isInverted = config[`axis_${axis?.getId(d.id)}_inverted`];
 				let pos = {
 					x: getX.bind(this)(d, i),
@@ -331,7 +355,7 @@ export default {
 	 */
 	getTextRect(element, className: string): object {
 		const $$ = this;
-		let base = (element.node ? element.node() : element);
+		let base = element.node ? element.node() : element;
 
 		if (!/text/i.test(base.tagName)) {
 			base = base.querySelector("text");
@@ -367,11 +391,12 @@ export default {
 	 */
 	generateXYForText(indices, forX?: boolean): (d, i) => number {
 		const $$ = this;
-		const {state: {hasRadar, hasTreemap}} = $$;
+		const {state: {hasRadar, hasFunnel, hasTreemap}} = $$;
 		const types = Object.keys(indices);
 		const points = {};
 		const getter = forX ? $$.getXForText : $$.getYForText;
 
+		hasFunnel && types.push("funnel");
 		hasRadar && types.push("radar");
 		hasTreemap && types.push("treemap");
 
@@ -383,10 +408,11 @@ export default {
 			const type = ($$.isAreaType(d) && "area") ||
 				($$.isBarType(d) && "bar") ||
 				($$.isCandlestickType(d) && "candlestick") ||
+				($$.isFunnelType(d) && "funnel") ||
 				($$.isRadarType(d) && "radar") ||
 				($$.isTreemapType(d) && "treemap") || "line";
 
-			return getter.call($$, points[type]?.(d, i), d, this);
+			return getter.call($$, points[type](d, i), d, this);
 		};
 	},
 
@@ -414,18 +440,18 @@ export default {
 
 				if (isRotated) {
 					const w = (
-						isPositive ?
-							points[1][1] - points[0][1] :
-							points[0][1] - points[1][1]
-					) / 2 + (rect.width / 2);
+								isPositive ?
+									points[1][1] - points[0][1] :
+									points[0][1] - points[1][1]
+							) / 2 + (rect.width / 2);
 
 					return isPositive ? -w - 3 : w + 2;
 				} else {
 					const h = (
-						isPositive ?
-							points[0][1] - points[1][1] :
-							points[1][1] - points[0][1]
-					) / 2 + (rect.height / 2);
+								isPositive ?
+									points[0][1] - points[1][1] :
+									points[1][1] - points[0][1]
+							) / 2 + (rect.height / 2);
 
 					return isPositive ? h : -h - 2;
 				}
@@ -451,19 +477,18 @@ export default {
 		const $$ = this;
 		const {config} = $$;
 		const isRotated = config.axis_rotated;
+		const isFunnelType = $$.isFunnelType(d);
 		const isTreemapType = $$.isTreemapType(d);
-		if (points == null) {
-			return 0;
-		}
-		let xPos = points[0][0];
+		let xPos = points ? points[0][0] : 0;
 
 		if ($$.isCandlestickType(d)) {
 			if (isRotated) {
-				xPos = $$.getCandlestickData(d)?._isUp ?
-					points[2][2] + 4 : points[2][1] - 4;
+				xPos = $$.getCandlestickData(d)?._isUp ? points[2][2] + 4 : points[2][1] - 4;
 			} else {
 				xPos += (points[1][0] - xPos) / 2;
 			}
+		} else if (isFunnelType) {
+			xPos += $$.state.current.width / 2;
 		} else if (isTreemapType) {
 			xPos += config.data_labels.centered ? 0 : 5;
 		} else {
@@ -480,7 +505,7 @@ export default {
 					xPos += padding * (value < 0 ? -1 : 1);
 				}
 			} else {
-				xPos = $$?.hasType("bar") ? (points[2][0] + points[0][0]) / 2 : xPos;
+				xPos = $$.hasType("bar") ? (points[2][0] + points[0][0]) / 2 : xPos;
 			}
 		}
 
@@ -505,16 +530,13 @@ export default {
 		const isRotated = config.axis_rotated;
 		const isInverted = config[`axis_${axis?.getId(d.id)}_inverted`];
 		const isBarType = $$.isBarType(d);
+		const isFunnelType = $$.isFunnelType(d);
 		const isTreemapType = $$.isTreemapType(d);
 		const r = config.point_r;
 		const rect = getBoundingRect(textElement);
 		let {value} = d;
 		let baseY = 3;
 		let yPos;
-
-		if (points == null) {
-			return 0;
-		}
 
 		if ($$.isCandlestickType(d)) {
 			value = $$.getCandlestickData(d);
@@ -523,14 +545,16 @@ export default {
 				yPos = points[0][0];
 				yPos += ((points[1][0] - yPos) / 2) + baseY;
 			} else {
-				yPos = value && value._isUp ?
-					points[2][2] - baseY :
-					points[2][1] + (baseY * 4);
+				yPos = value && value._isUp ? points[2][2] - baseY : points[2][1] + (baseY * 4);
 
 				if (isInverted) {
 					yPos += 15 * (value._isUp ? 1 : -1);
 				}
 			}
+		} else if (isFunnelType) {
+			yPos = points ?
+				points[0][1] + ((points[1][1] - points[0][1]) / 2) + rect.height / 2 - 3 :
+				0;
 		} else if (isTreemapType) {
 			yPos = points[0][1] + (config.data_labels.centered ? 0 : rect.height + 5);
 		} else {
@@ -543,7 +567,9 @@ export default {
 					baseY += config.point_r / 2.3;
 				}
 
-				if (value < 0 || (value === 0 && !state.hasPositiveValue && state.hasNegativeValue)) {
+				if (
+					value < 0 || (value === 0 && !state.hasPositiveValue && state.hasNegativeValue)
+				) {
 					yPos += isInverted ? (isBarType ? -3 : -5) : (
 						rect.height + (isBarType ? -baseY : baseY)
 					);
@@ -592,8 +618,10 @@ export default {
 		textNode.node() && filteredTextNodes.each(function() {
 			const coordinate = getTranslation(this);
 			const filteredTextNode = d3Select(this);
-			const nodeForWidth = calcHypo(translate.e, translate.f) > calcHypo(coordinate.e, coordinate.f) ?
-				textNode : filteredTextNode;
+			const nodeForWidth =
+				calcHypo(translate.e, translate.f) > calcHypo(coordinate.e, coordinate.f) ?
+					textNode :
+					filteredTextNode;
 
 			const overlapsX = Math.ceil(Math.abs(translate.e - coordinate.e)) <
 				Math.ceil(nodeForWidth.node().getComputedTextLength());
@@ -626,7 +654,8 @@ export default {
 	 * @returns {boolean}
 	 * @private
 	 */
-	meetsLabelThreshold(ratio: number = 0, type: "bar" | "donut" | "gauge" | "pie" | "polar" | "treemap"): boolean {
+	meetsLabelThreshold(ratio: number = 0,
+		type: "bar" | "donut" | "gauge" | "pie" | "polar" | "treemap"): boolean {
 		const $$ = this;
 		const {config} = $$;
 		const threshold = config[`${type}_label_threshold`] || 0;

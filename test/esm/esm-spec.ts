@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {expect} from "chai";
+import {describe, expect, it} from "vitest";
 import * as bb from "../../src/index.esm";
 import {$RADAR} from "../../src/config/classes";
 
@@ -85,6 +85,9 @@ describe("ESM build", function() {
                             expect(this.querySelector("path")).to.not.be.null;
                             expect(this.querySelector("line")).to.not.be.null;
                         });
+
+                    } else if (v === "funnel") {
+                        path = chart.internal.$el.funnel.selectAll("path").size();
 
                     } else if (v === "polar") {
                         path = chart.$.main.selectAll("path").attr("d");

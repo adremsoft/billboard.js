@@ -50,9 +50,27 @@
 	}
 }
 
+/*-- Funnel --*/
+.bb-chart-funnels {
+	path {
+		stroke-width: 0;
+	}
+
+	+ .bb-chart-texts text {
+		font-size: 13px;
+		fill: #fff;
+	}
+}
+
 /*-- Axis --*/
 .bb-axis {
 	shape-rendering: crispEdges;
+
+	.bb-axis-x-tooltip, .bb-axis-y-tooltip, .bb-axis-y2-tooltip {
+		font-size: 1em;
+		fill: #fff;
+		white-space: nowrap;
+	}
 }
 
 /*-- Grid --*/
@@ -136,8 +154,9 @@
 }
 /*-- Region --*/
 .bb-region {
+	fill: steelblue;
+
 	rect {
-		fill: steelblue;
 		fill-opacity: .1;
 	}
 }

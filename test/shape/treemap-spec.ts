@@ -4,7 +4,8 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {expect} from "chai";
+import {beforeEach, beforeAll, afterAll, describe, expect, it} from "vitest";
+import sinon from "sinon";
 import util from "../assets/util";
 import {parseNum} from "../assets/helper";
 
@@ -17,7 +18,7 @@ describe("TREEMAP", () => {
 	});
 
 	describe("shapes rendering", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				padding: {
 					top: 0,
@@ -189,10 +190,29 @@ describe("TREEMAP", () => {
 
 			treemap.destroy();
 		});
+
+		it("should generate w/o error", () => {
+			const param = {
+				data: {
+					columns: [
+						["data1", 1300],
+					],
+					type: "treemap"
+				  },
+				  bindto: "#chart25"
+			};
+
+			// generate with only given argument
+			const treemap = util.generate(param, true)
+
+			treemap.destroy();
+
+			expect(true).to.be.ok;
+		});
 	});
 
 	describe("label options", () => {
-		before(() => {
+		beforeAll(() => {
 			args.treemap.label = {
 				show: false,
 				format: function(value, ratio, id) {
@@ -201,7 +221,7 @@ describe("TREEMAP", () => {
 			};
 		});
 
-		after(() => {
+		afterAll(() => {
 			args.treemap.label = {
 				show: true
 			};
@@ -216,7 +236,7 @@ describe("TREEMAP", () => {
 	});
 
 	describe("interaction", () => {
-		it("data load via .load() API", done => {
+		it("data load via .load() API", () => new Promise(done => {
 			const orgValue = chart.data.values("data1");
 			const dataLen = chart.data().length;
 
@@ -228,10 +248,10 @@ describe("TREEMAP", () => {
 				done: function() {
 					expect(this.data.values("data1")[0]).to.be.equal(300);
 					expect(chart.data().length).to.be.equal(dataLen - 1);
-					done();
+					done(1);
 				}
 			});
-		});
+		}));
 
 		it("tooltip show via .tooltip.show() API", () => {
 			const id = "data1";
@@ -277,6 +297,48 @@ describe("TREEMAP", () => {
 			chart.tooltip.show({data: {id}})
 
 			expect(chart.$.tooltip.select(".name").text()).to.be.equal(id);
+		});
+	});
+
+	describe("data.onover/out", () => {
+		let overSpy = sinon.spy();
+		let outSpy = sinon.spy();
+
+		beforeAll(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 130],
+						["data2", 200],
+						["data3", 500]
+					],
+					type: "treemap",
+					onover: overSpy,
+					onout: outSpy
+				}
+			}
+		});
+
+		it("should argument passed correctly", () => {
+			const id = "data1";
+
+			// when
+			chart.tooltip.show({data: {id}});
+
+			expect(overSpy.called).to.be.true;
+			let [data, element] = overSpy.args[0];
+
+			expect(data.id === id).to.be.true;
+			expect(element.tagName).to.be.equal("rect");
+
+			// when
+			chart.tooltip.hide();
+			[data, element] = overSpy.args[0];
+
+			expect(outSpy.called).to.be.true;
+
+			expect(data.id === id).to.be.true;
+			expect(element.tagName).to.be.equal("rect");
 		});
 	});
 });

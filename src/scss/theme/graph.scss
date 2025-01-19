@@ -48,9 +48,26 @@ $axis-color: #8c8c8c;
 	}
 }
 
+/*-- Funnel --*/
+.bb-chart-funnels {
+	path {
+		stroke-width: 0;
+	}
+
+	+ .bb-chart-texts text {
+		fill: #fff;
+	}
+}
+
 /*-- Axis --*/
 .bb-axis {
     shape-rendering: crispEdges;
+
+	.bb-axis-x-tooltip, .bb-axis-y-tooltip, .bb-axis-y2-tooltip {
+        font-size: 0.9em;
+        fill: #fff;
+		white-space: nowrap;
+	}
 }
 
 .bb-axis-y text, .bb-axis-y2 text {
@@ -158,8 +175,9 @@ rect.bb-circle, use.bb-circle {
 
 /*-- Region --*/
 .bb-region {
+    fill: steelblue;
+
     rect {
-        fill: steelblue;
         fill-opacity: 0.1;
     }
 

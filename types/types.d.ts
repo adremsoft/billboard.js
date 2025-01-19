@@ -17,13 +17,16 @@ export type ChartTypes = "area"
 	| "area-spline"
 	| "area-spline-range"
 	| "area-step"
+	| "area-step-range"
 	| "bar"
 	| "bubble"
 	| "candlestick"
 	| "donut"
+	| "funnel"
 	| "gauge"
 	| "line"
 	| "pie"
+	| "polar"
 	| "radar"
 	| "scatter"
 	| "spline"
@@ -61,19 +64,5 @@ export interface DataRegionsType {
 		style?: {
 			dasharray?: string;
 		}
-	};
-}
-
-export interface RegionsType {
-	axis?: "x" | "y" | "y2";
-	start?: number;
-	end?: number;
-	class?: string;
-	label?: {
-		text: string;
-		x?: number;
-		y?: number;
-		color?: string;
-		rotated?: boolean;
 	};
 }

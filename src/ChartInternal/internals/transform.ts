@@ -5,7 +5,8 @@
 import {$ARC, $AXIS} from "../../config/classes";
 import {asHalfPixel} from "../../module/util";
 
-type TranslateParam = "main" | "context" | "legend" | "x" | "y" | "y2" | "subX" | "arc" | "radar" | "polar";
+type TranslateParam = "main" | "context" | "legend" | "x" | "y" | "y2" | "subX" | "arc" | "radar"
+	| "polar";
 
 export default {
 	getTranslate(target: TranslateParam, index = 0): string {
@@ -44,6 +45,10 @@ export default {
 		} else if (target === "arc") {
 			x = state.arcWidth / 2;
 			y = state.arcHeight / 2;
+
+			if (config.arc_rangeText_values?.length) {
+				y += 5 + ($$.hasType("gauge") && config.title_text ? 10 : 0);
+			}
 		} else if (target === "polar") {
 			x = state.arcWidth / 2;
 			y = state.arcHeight / 2;
@@ -69,7 +74,6 @@ export default {
 			transitions.axisY :
 			$T(main.select(`.${$AXIS.axisY}`), withTransition);
 
-
 		const y2Axis = transitions?.axisY2 ?
 			transitions.axisY2 :
 			$T(main.select(`.${$AXIS.axisY2}`), withTransition);
@@ -87,9 +91,9 @@ export default {
 
 	transformAll(withTransition: boolean, transitions): void {
 		const $$ = this;
-		const {config, state: {hasAxis, hasTreemap}, $el} = $$;
+		const {config, state: {hasAxis, hasFunnel, hasTreemap}, $el} = $$;
 
-		!hasTreemap && $$.transformMain(withTransition, transitions);
+		!hasFunnel && !hasTreemap && $$.transformMain(withTransition, transitions);
 
 		hasAxis && config.subchart_show &&
 			$$.transformContext(withTransition, transitions);

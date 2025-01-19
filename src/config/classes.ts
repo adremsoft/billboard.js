@@ -18,6 +18,7 @@ export const $COMMON = {
 export const $ARC = {
 	arc: "bb-arc",
 	arcLabelLine: "bb-arc-label-line",
+	arcRange: "bb-arc-range",
 	arcs: "bb-arcs",
 	chartArc: "bb-chart-arc",
 	chartArcs: "bb-chart-arcs",
@@ -38,7 +39,10 @@ export const $AXIS = {
 	axisY: "bb-axis-y",
 	axisY2: "bb-axis-y2",
 	axisY2Label: "bb-axis-y2-label",
-	axisYLabel: "bb-axis-y-label"
+	axisYLabel: "bb-axis-y-label",
+	axisXTooltip: "bb-axis-x-tooltip",
+	axisYTooltip: "bb-axis-y-tooltip",
+	axisY2Tooltip: "bb-axis-y2-tooltip"
 };
 
 export const $BAR = {
@@ -73,6 +77,13 @@ export const $DRAG = {
 	INCLUDED: "_included_"
 };
 
+export const $FUNNEL = {
+	funnel: "bb-funnel",
+	chartFunnel: "bb-chart-funnel",
+	chartFunnels: "bb-chart-funnels",
+	funnelBackground: "bb-funnel-background"
+};
+
 export const $GAUGE = {
 	chartArcsGaugeMax: "bb-chart-arcs-gauge-max",
 	chartArcsGaugeMin: "bb-chart-arcs-gauge-min",
@@ -102,8 +113,7 @@ export const $EVENT = {
 	eventRect: "bb-event-rect",
 	eventRects: "bb-event-rects",
 	eventRectsMultiple: "bb-event-rects-multiple",
-	eventRectsSingle: "bb-event-rects-single",
-
+	eventRectsSingle: "bb-event-rects-single"
 };
 
 export const $FOCUS = {
@@ -150,7 +160,7 @@ export const $SELECT = {
 
 export const $SHAPE = {
 	shape: "bb-shape",
-	shapes: "bb-shapes",
+	shapes: "bb-shapes"
 };
 
 export const $SUBCHART = {
@@ -199,6 +209,7 @@ export default {
 	...$LINE,
 	...$EVENT,
 	...$FOCUS,
+	...$FUNNEL,
 	...$GRID,
 	...$RADAR,
 	...$REGION,

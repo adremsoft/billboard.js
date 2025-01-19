@@ -3,28 +3,28 @@
  * billboard.js project is licensed under the MIT license
  * @ignore
  */
-import {pointer as d3Pointer} from "d3-selection";
 import {brushSelection as d3BrushSelection} from "d3-brush";
+import {pointer as d3Pointer} from "d3-selection";
 import type {d3Selection} from "../../types/types";
-import {document, window, requestAnimationFrame} from "./browser";
+import {document, requestAnimationFrame, window} from "./browser";
 
 export {
 	addCssRules,
 	asHalfPixel,
 	brushEmpty,
 	callFn,
-	capitalize,
 	camelize,
+	capitalize,
 	ceil10,
 	convertInputType,
 	deepClone,
 	diffDomain,
-	endall,
 	emulateEvent,
+	endall,
 	extend,
 	findIndex,
-	getBrushSelection,
 	getBoundingRect,
+	getBrushSelection,
 	getCssRules,
 	getMinMax,
 	getOption,
@@ -33,11 +33,15 @@ export {
 	getRandom,
 	getRange,
 	getRectSegList,
+	getScrollPosition,
+	getTransformCTM,
 	getTranslation,
 	getUnique,
+	hasStyle,
 	hasValue,
+	hasViewBox,
 	isArray,
-	isboolean,
+	isBoolean,
 	isDefined,
 	isEmpty,
 	isFunction,
@@ -61,12 +65,12 @@ export {
 };
 
 const isValue = (v: any): boolean => v || v === 0;
-const isFunction = (v: unknown): v is ((...args: any[]) => any) => typeof v === "function";
+const isFunction = (v: unknown): v is (...args: any[]) => any => typeof v === "function";
 const isString = (v: unknown): v is string => typeof v === "string";
 const isNumber = (v: unknown): v is number => typeof v === "number";
 const isUndefined = (v: unknown): v is undefined => typeof v === "undefined";
 const isDefined = (v: unknown): boolean => typeof v !== "undefined";
-const isboolean = (v: unknown): boolean => typeof v === "boolean";
+const isBoolean = (v: unknown): boolean => typeof v === "boolean";
 const ceil10 = (v: number): number => Math.ceil(v / 10) * 10;
 const asHalfPixel = (n: number): number => Math.ceil(n) + 0.5;
 const diffDomain = (d: number[]): number => d[1] - d[0];
@@ -170,7 +174,8 @@ function endall(transition, cb: Function): void {
  */
 function sanitize(str: string): string {
 	return isString(str) ?
-		str.replace(/<(script|img)?/ig, "&lt;").replace(/(script)?>/ig, "&gt;") : str;
+		str.replace(/<(script|img)?/ig, "&lt;").replace(/(script)?>/ig, "&gt;") :
+		str;
 }
 
 /**
@@ -226,7 +231,7 @@ function getRectSegList(path: SVGGraphicsElement): {x: number, y: number}[] {
 	 *   |               |
 	 *   |               |
 	 * seg0 ---------- seg3
-	 * */
+	 */
 	const {x, y, width, height} = path.getBBox();
 
 	return [
@@ -252,10 +257,12 @@ function getPathBox(
 	const y = Math.min(items[0].y, items[1].y);
 
 	return {
-		x, y, width, height
+		x,
+		y,
+		width,
+		height
 	};
 }
-
 
 /**
  * Get event's current position coordinates
@@ -264,13 +271,14 @@ function getPathBox(
  * @returns {Array} [x, y] Coordinates x, y array
  * @private
  */
-function getPointer(event, element?: Element): number[] {
-	const touches = event && (event.touches || (event.sourceEvent && event.sourceEvent.touches))?.[0];
+function getPointer(event, element?: SVGElement): number[] {
+	const touches = event &&
+		(event.touches || (event.sourceEvent && event.sourceEvent.touches))?.[0];
 	let pointer = [0, 0];
 
 	try {
 		pointer = d3Pointer(touches || event, element);
-	} catch (e) {}
+	} catch {}
 
 	return pointer.map(v => (isNaN(v) ? 0 : v));
 }
@@ -289,7 +297,7 @@ function getBrushSelection(ctx) {
 	// check from event
 	if (event && event.type === "brush") {
 		selection = event.selection;
-	// check from brush area selection
+		// check from brush area selection
 	} else if (main && (selection = main.select(".bb-brush").node())) {
 		selection = d3BrushSelection(selection);
 	}
@@ -304,16 +312,24 @@ function getBrushSelection(ctx) {
  * @returns {object}
  * @private
  */
-function getBoundingRect(node): {
-	left: number, top: number, right: number, bottom: number,
-	x: number, y: number, width: number, height: number
+function getBoundingRect(
+	node
+): {
+	left: number,
+	top: number,
+	right: number,
+	bottom: number,
+	x: number,
+	y: number,
+	width: number,
+	height: number
 } {
 	const needEvaluate = !("rect" in node) || (
-		"rect" in node && node.hasAttribute("width") && node.rect.width !== +node.getAttribute("width")
+		"rect" in node && node.hasAttribute("width") &&
+		node.rect.width !== +node.getAttribute("width")
 	);
 
-	return needEvaluate ?
-		(node.rect = node.getBoundingClientRect()) : node.rect;
+	return needEvaluate ? (node.rect = node.getBoundingClientRect()) : node.rect;
 }
 
 /**
@@ -443,7 +459,6 @@ function extend(target = {}, source): object {
  */
 const capitalize = (str: string): string => str.charAt(0).toUpperCase() + str.slice(1);
 
-
 /**
  * Camelize from kebob style string
  * @param {string} str Target string
@@ -476,12 +491,13 @@ const toArray = (v: CSSStyleDeclaration | any): any => [].slice.call(v);
  * @private
  */
 function addCssRules(style, selector: string, prop: string[]): number {
-	const {rootSelctor, sheet} = style;
-	const getSelector = s => s
-		.replace(/\s?(bb-)/g, ".$1")
-		.replace(/\.+/g, ".");
+	const {rootSelector = "", sheet} = style;
+	const getSelector = s =>
+		s
+			.replace(/\s?(bb-)/g, ".$1")
+			.replace(/\.+/g, ".");
 
-	const rule = `${rootSelctor} ${getSelector(selector)} {${prop.join(";")}}`;
+	const rule = `${rootSelector} ${getSelector(selector)} {${prop.join(";")}}`;
 
 	return sheet[sheet.insertRule ? "insertRule" : "addRule"](
 		rule,
@@ -509,6 +525,44 @@ function getCssRules(styleSheets: any[]) {
 	});
 
 	return rules;
+}
+
+/**
+ * Get current window and container scroll position
+ * @param {HTMLElement} node Target element
+ * @returns {object} window scroll position
+ * @private
+ */
+function getScrollPosition(node: HTMLElement) {
+	return {
+		x: (window.pageXOffset ?? window.scrollX ?? 0) + (node.scrollLeft ?? 0),
+		y: (window.pageYOffset ?? window.scrollY ?? 0) + (node.scrollTop ?? 0)
+	};
+}
+
+/**
+ * Get translation string from screen <--> svg point
+ * @param {SVGGraphicsElement} node graphics element
+ * @param {number} x target x point
+ * @param {number} y target y point
+ * @param {boolean} inverse inverse flag
+ * @returns {object}
+ */
+function getTransformCTM(node: SVGGraphicsElement, x = 0, y = 0, inverse = true): DOMPoint {
+	const point = new DOMPoint(x, y);
+	const screen = <DOMMatrix>node.getScreenCTM();
+	const res = point.matrixTransform(
+		inverse ? screen?.inverse() : screen
+	);
+
+	if (inverse === false) {
+		const rect = node.getBoundingClientRect();
+
+		res.x -= rect.x;
+		res.y -= rect.y;
+	}
+
+	return res;
 }
 
 /**
@@ -572,8 +626,7 @@ function mergeObj(target: object, ...objectN): any {
 				!target[key] && (target[key] = {});
 				target[key] = mergeObj(target[key], value);
 			} else {
-				target[key] = isArray(value) ?
-					value.concat() : value;
+				target[key] = isArray(value) ? value.concat() : value;
 			}
 		});
 	}
@@ -611,7 +664,8 @@ function sortValue(data: any[], isAsc = true): any[] {
  * @returns {number|Date|undefined}
  * @private
  */
-function getMinMax(type: "min" | "max", data: number[] | Date[] | any): number | Date | undefined | any {
+function getMinMax(type: "min" | "max", data: number[] | Date[] | any): number | Date | undefined
+	| any {
 	let res = data.filter(v => notEmpty(v));
 
 	if (res.length) {
@@ -650,7 +704,12 @@ const getRange = (start: number, end: number, step = 1): number[] => {
 const emulateEvent = {
 	mouse: (() => {
 		const getParams = () => ({
-			bubbles: false, cancelable: false, screenX: 0, screenY: 0, clientX: 0, clientY: 0
+			bubbles: false,
+			cancelable: false,
+			screenX: 0,
+			screenY: 0,
+			clientX: 0,
+			clientY: 0
 		});
 
 		try {
@@ -660,7 +719,7 @@ const emulateEvent = {
 			return (el: SVGElement | HTMLElement, eventType: string, params = getParams()) => {
 				el.dispatchEvent(new MouseEvent(eventType, params));
 			};
-		} catch (e) {
+		} catch {
 			// Polyfills DOM4 MouseEvent
 			return (el: SVGElement | HTMLElement, eventType: string, params = getParams()) => {
 				const mouseEvent = document.createEvent("MouseEvent");
@@ -672,9 +731,16 @@ const emulateEvent = {
 					params.cancelable,
 					window,
 					0, // the event's mouse click count
-					params.screenX, params.screenY,
-					params.clientX, params.clientY,
-					false, false, false, false, 0, null
+					params.screenX,
+					params.screenY,
+					params.clientX,
+					params.clientY,
+					false,
+					false,
+					false,
+					false,
+					0,
+					null
 				);
 
 				el.dispatchEvent(mouseEvent);
@@ -750,6 +816,39 @@ function parseDate(date: Date | string | number | any): Date {
 }
 
 /**
+ * Check if svg element has viewBox attribute
+ * @param {d3Selection} svg Target svg selection
+ * @returns {boolean}
+ */
+function hasViewBox(svg: d3Selection): boolean {
+	const attr = svg.attr("viewBox");
+
+	return attr ? /(\d+(\.\d+)?){3}/.test(attr) : false;
+}
+
+/**
+ * Determine if given node has the specified style
+ * @param {d3Selection|SVGElement} node Target node
+ * @param {object} condition Conditional style props object
+ * @param {boolean} all If true, all condition should be matched
+ * @returns {boolean}
+ */
+function hasStyle(node, condition: {[key: string]: string}, all = false): boolean {
+	const isD3Node = !!node.node;
+	let has = false;
+
+	for (const [key, value] of Object.entries(condition)) {
+		has = isD3Node ? node.style(key) === value : node.style[key] === value;
+
+		if (all === false && has) {
+			break;
+		}
+	}
+
+	return has;
+}
+
+/**
  * Return if the current doc is visible or not
  * @returns {boolean}
  * @private
@@ -767,6 +866,9 @@ function isTabVisible(): boolean {
  */
 function convertInputType(mouse: boolean, touch: boolean): "mouse" | "touch" | null {
 	const {DocumentTouch, matchMedia, navigator} = window;
+
+	// https://developer.mozilla.org/en-US/docs/Web/CSS/@media/pointer#coarse
+	const hasPointerCoarse = matchMedia?.("(pointer:coarse)").matches;
 	let hasTouch = false;
 
 	if (touch) {
@@ -774,31 +876,29 @@ function convertInputType(mouse: boolean, touch: boolean): "mouse" | "touch" | n
 		if (navigator && "maxTouchPoints" in navigator) {
 			hasTouch = navigator.maxTouchPoints > 0;
 
-		// Ref: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
-		// On IE11 with IE9 emulation mode, ('ontouchstart' in window) is returning true
-		} else if ("ontouchmove" in window || (DocumentTouch && document instanceof DocumentTouch)) {
+			// Ref: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
+			// On IE11 with IE9 emulation mode, ('ontouchstart' in window) is returning true
+		} else if (
+			"ontouchmove" in window || (DocumentTouch && document instanceof DocumentTouch)
+		) {
 			hasTouch = true;
 		} else {
 			// https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#avoiding_user_agent_detection
-			if (matchMedia?.("(pointer:coarse)").matches) {
+			if (hasPointerCoarse) {
 				hasTouch = true;
 			} else {
 				// Only as a last resort, fall back to user agent sniffing
 				const UA = navigator.userAgent;
 
-				hasTouch = (
-					/\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) ||
-					/\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA)
-				);
+				hasTouch = /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) ||
+					/\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA);
 			}
 		}
 	}
 
-	// Check if agent has mouse using any-hover, touch devices (e.g iPad) with external mouse will return true as long as mouse is connected
-	// https://css-tricks.com/interaction-media-features-and-their-potential-for-incorrect-assumptions/#aa-testing-the-capabilities-of-all-inputs
-	// Demo: https://patrickhlauke.github.io/touch/pointer-hover-any-pointer-any-hover/
-	const hasMouse = mouse && ["any-hover:hover", "any-pointer:fine"]
-		.some(v => matchMedia?.(`(${v})`).matches);
+	// For non-touch device, media feature condition is: '(pointer:coarse) = false' and '(pointer:fine) = true'
+	// https://github.com/naver/billboard.js/issues/3854#issuecomment-2404183158
+	const hasMouse = mouse && !hasPointerCoarse && matchMedia?.("(pointer:fine)").matches;
 
 	// fallback to 'mouse' if no input type is detected.
 	return (hasMouse && "mouse") || (hasTouch && "touch") || "mouse";
@@ -817,4 +917,3 @@ function runUntil(fn: Function, conditionFn: Function): void {
 		fn();
 	}
 }
-
