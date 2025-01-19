@@ -706,7 +706,7 @@ export default {
 		const {
 			$el,
 			config,
-			state: {hasRadar, inputType, eventReceiver: {coords, rect}}
+			state: {hasRadar, inputType, eventReceiver: {coords, rect, scale}}
 		} = $$;
 		let index;
 
@@ -743,7 +743,7 @@ export default {
 
 			index = findIndex(
 				coords,
-				point,
+				(isRotated ? e.clientY - rect.top : e.clientX - rect.left) * scale, //AdRem
 				0,
 				coords.length - 1,
 				isRotated
