@@ -47,7 +47,7 @@ const config = {
 				test: /\.[jt]s$/,
 				loader: "esbuild-loader",
 				options: {
-					target: "es2015"
+					target: "es2022"
 				},
 				exclude: {
 					and: [/node_modules/],
