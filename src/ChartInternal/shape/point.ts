@@ -186,7 +186,7 @@ export default {
 		const opacityStyleFn = $$.opacityForCircle.bind($$);
 		const mainCircles: any[] = [];
 
-		$root.circle.each(function(d) {
+		$root.circle?.each(function(d) {
 			let result: d3Selection | any = fn.bind(this)(d);
 
 			result = $T(result, withTransition || !rendered, t)
@@ -272,9 +272,9 @@ export default {
 		return (d, i) => {
 			const id = d.id;
 
-			return $$.isGrouped(id) ?
+			return ($$.isGrouped(id) ?
 				getPoints(d, i)[0][1] :
-				$$.getYScaleById(id, isSub)($$.getBaseValue(d));
+				$$.getYScaleById(id, isSub)($$.getBaseValue(d))) || 0; //!!AdRem
 		};
 	},
 
@@ -535,7 +535,7 @@ export default {
 
 			return mainCircles
 				.attr("cx", xPosFn)
-				.attr("cy", yPosFn)
+				.attr("cy",yPosFn)
 				.style("fill", fillStyleFn);
 		}
 	},
