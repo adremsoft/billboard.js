@@ -31,7 +31,7 @@ const config = {
 		minimizer: [
 			new EsbuildPlugin({
 				include: /\.min\.(js|css)$/,
-				target: "es2015",
+				target: "es2022",
 				css: true,
 				format: undefined
 			})
