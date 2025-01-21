@@ -35,7 +35,7 @@ export default {
 			.append("circle")
 			.attr("class", () => $$.generateClass($SELECT.selectedCircle, i))
 			.attr("cx", cx)
-			.attr("cy", cy)
+			.attr("cy", cy || 0) //!!AdRem
 			.attr("stroke", $$.color)
 			.attr("r", d2 => $$.pointSelectR(d2) * 1.4)).attr("r", r);
 	},
