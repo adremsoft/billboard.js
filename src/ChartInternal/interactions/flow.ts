@@ -176,7 +176,7 @@ export default {
 					.style("fill-opacity", $$.opacityForText.bind($$));
 			} else if (v === "circle") {
 				if ($$.isCirclePoint()) {
-					n.attr("cx", cx).attr("cy", cy);
+					n.attr("cx", cx).attr("cy", cy || 0); //!!AdRem
 				} else {
 					const xFunc = d => cx(d) - config.point_r;
 					const yFunc = d => cy(d) - config.point_r;
