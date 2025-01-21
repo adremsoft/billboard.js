@@ -73,7 +73,7 @@ export default class AxisRendererHelper {
 	getTickTransformSetter(id: string): (selection: d3Selection, scale) => void {
 		const {config} = this;
 		const fn = id === "x" ?
-			value => `translate(${value + config.tickOffset},0)` :
+			value => `translate(${(value + config.tickOffset) || 0},0)` : //!!AdRem
 			value => `translate(0,${value})`;
 
 		return (selection, scale) => {
